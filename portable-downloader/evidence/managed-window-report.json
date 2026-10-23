@@ -1,0 +1,12 @@
+{
+  "version": "0.5.0",
+  "checks": [
+    "repeated launch reuses the same server and owned window",
+    "dedicated window opens its native browser download manager",
+    "real YouTube MP3 is saved through the native download manager",
+    "one click closes app, download manager and backend despite tab history; unrelated browser and saved file remain",
+    "native window close also shuts down the local tool; profile can reopen"
+  ],
+  "status": "pass",
+  "testedAt": "2026-10-23T16:35:25.270Z"
+}

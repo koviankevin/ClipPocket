@@ -60,6 +60,7 @@ function renderHistory(files){
   }
 }
 function render(state){
+  q('downloads').hidden=state.windowMode!=='managed';q('downloads').disabled=Boolean(state.update?.busy);
   current=state;renderUpdate(state);for(const id of ['url','paste','analyze','download','chooseFolder','delivery'])q(id).disabled=state.busy||state.update?.busy;
   document.querySelectorAll('input[name=format], [data-sample]').forEach(el=>el.disabled=state.busy||state.update?.busy);
   q('cancel').hidden=!state.busy;q('status').classList.toggle('error',Boolean(state.error));q('statusText').textContent=state.error||state.message;q('statusDetail').textContent=state.detail||'';
@@ -113,6 +114,7 @@ q('installUpdate').onclick=async()=>{q('installUpdate').disabled=true;try{await 
 q('cancel').onclick=()=>api('cancel',{}).catch(localError);
 q('chooseFolder').onclick=async()=>{q('chooseFolder').disabled=true;try{await api('folder',{});}catch(error){localError(error);}finally{q('chooseFolder').disabled=false;}};
 q('openFolder').onclick=async()=>{try{await api('open-folder',{});notice('已開啟下載資料夾。');}catch(error){localError(error);}};
+q('downloads').onclick=()=>api('downloads',{}).catch(error=>notice(error.message));
 function closeToolTab(){
   q('closedMessage').textContent='本機工具已停止，正在關閉這個分頁…';
   try{window.close();}catch{}
@@ -124,6 +126,9 @@ q('shutdown').onclick=async()=>{
   try{await api('shutdown',{});}catch(error){closingUI=false;q('shutdown').disabled=false;q('shutdown').textContent='關閉工具';localError(error);notice(error.message);return;}
   stopped=true;pendingJob=null;document.querySelectorAll('button,input,select').forEach(el=>el.disabled=true);
   document.querySelector('main').hidden=true;q('closedPanel').hidden=false;window.scrollTo(0,0);q('closedTitle').setAttribute('tabindex','-1');q('closedTitle').focus();
+  if(current?.windowMode==='managed'){
+    q('closedMessage').textContent='正在關閉專用視窗與本機程式…';q('closedHint').textContent='視窗會自動關閉，請稍候。';return;
+  }
   // The request is an acknowledgement. Wait until the local listener is gone
   // before telling the user that the tool has finished closing.
   const deadline=Date.now()+8000;let disconnected=false;
