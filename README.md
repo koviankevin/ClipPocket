@@ -2,7 +2,7 @@
 
 Windows 免安裝影片下載工具，支援 YouTube、Facebook 與 Bilibili 的公開、免登入單支影片。用瀏覽器操作，在自己的電腦下載、合併影音及轉檔，不需要訂閱或架設伺服器。
 
-**[下載 Windows 64 位元免安裝版](https://github.com/koviankevin/ClipPocket/releases/latest/download/ClipPocket-0.3.0-Windows-x64-portable.zip)** · [版本紀錄](https://github.com/koviankevin/ClipPocket/releases/latest)
+**[下載與操作教學](https://koviankevin.github.io/ClipPocket/)** · [直接下載 Windows 64 位元免安裝版](https://github.com/koviankevin/ClipPocket/releases/download/v0.3.0/ClipPocket-0.3.0-Windows-x64-portable.zip) · [版本紀錄](https://github.com/koviankevin/ClipPocket/releases/latest)
 
 ## 開始使用
 
