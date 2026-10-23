@@ -23,96 +23,10 @@ const browserDownloads=new BrowserDownloads(DATA);
 const NO_OPEN=process.argv.includes('--no-open')||process.env.CLIPPOCKET_TEST_MODE==='1';
 const NO_BROWSER=process.argv.includes('--no-browser');
 const TOKEN=crypto.randomBytes(32).toString('hex');
-let origin='',server,activeProcess=null,cancelled=false,closing=false,ready=NO_OPEN||NO_BROWSER,lastBeat=Date.now(),startedAt=Date.now();
+let origin='',server,activeProcess=null,cancelled=false,closing=false,lastBeat=Date.now(),startedAt=Date.now();
 const state={busy:false,phase:'idle',message:'貼上網址，就能開始。',progress:null,detail:'',video:null,files:[],error:null,folder:'',log:[]};
 const updates=new Updates(ROOT,APP_VERSION);
-// A separate browser profile gives this process ownership of the whole tool
-// window. Never attach to, or terminate, the user's personal browser process.
-class ToolWindow {
-  constructor(){this.profile=path.join(DATA,'window-profile');this.pending=new Map();this.sequence=0;this.downloading=new Set();this.socket=null;this.child=null;this.opening=null;this.mainTarget=null;this.lock=null;}
-  async command(method,params={}){
-    if(this.socket?.readyState!==WebSocket.OPEN)throw Error('工具視窗尚未準備完成。');
-    const id=++this.sequence;
-    return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{this.pending.delete(id);reject(Error('工具視窗回應逾時。'));},3000);this.pending.set(id,{resolve,reject,timer});this.socket.send(JSON.stringify({id,method,params}));});
-  }
-  async activate(targetId){
-    const {windowId}=await this.command('Browser.getWindowForTarget',{targetId});
-    await this.command('Browser.setWindowBounds',{windowId,bounds:{windowState:'normal'}});
-    await this.command('Target.activateTarget',{targetId});
-  }
-  open(url){if(this.opening)return this.opening;this.opening=this.openInner(url).finally(()=>this.opening=null);return this.opening;}
-  async openInner(url){
-    if(this.socket?.readyState===WebSocket.OPEN){
-      const {targetInfos}=await this.command('Target.getTargets');
-      const target=targetInfos.find(t=>t.type==='page'&&t.url.startsWith(origin+'/'));
-      this.mainTarget=target?.targetId||(await this.command('Target.createTarget',{url,newWindow:true})).targetId;
-      await this.activate(this.mainTarget);return;
-    }
-    const candidates=[];
-    for(const base of [process.env['ProgramFiles(x86)'],process.env.ProgramFiles,process.env.LOCALAPPDATA].filter(Boolean))for(const vendor of ['Microsoft/Edge','Google/Chrome'])candidates.push(path.join(base,vendor,'Application',vendor.includes('Edge')?'msedge.exe':'chrome.exe'));
-    this.executable=candidates.find(file=>fs.existsSync(file));
-    if(!this.executable)throw Error('專用視窗需要 Microsoft Edge 或 Google Chrome。請安裝其中一個瀏覽器後重新開啟 ClipPocket。');
-    await fsp.mkdir(this.profile,{recursive:true});
-    const preferences=path.join(this.profile,'Default','Preferences');
-    if(!fs.existsSync(preferences)){await fsp.mkdir(path.dirname(preferences),{recursive:true});await fsp.writeFile(preferences,JSON.stringify({signin:{allowed:false,allowed_on_next_startup:false},sync:{requested:false}}),{flag:'wx'});}
-    const lockPath=path.join(this.profile,'clippocket-owner.json');
-    try{const owner=JSON.parse(await fsp.readFile(lockPath,'utf8'));if(!Number.isInteger(owner.pid)||owner.pid<=0)throw Error('專用視窗的擁有者紀錄無效。');try{process.kill(owner.pid,0);throw Error('專用視窗仍在關閉中，請稍候重新開啟。');}catch(e){if(e.code!=='ESRCH')throw e;}await fsp.unlink(lockPath);}catch(e){if(e.code!=='ENOENT')throw e;}
-    this.lock=await fsp.open(lockPath,'wx');await this.lock.writeFile(JSON.stringify({pid:process.pid}));
-    await fsp.unlink(path.join(this.profile,'DevToolsActivePort')).catch(e=>{if(e.code!=='ENOENT')throw e;});
-    this.child=spawn(this.executable,['--user-data-dir='+this.profile,'--remote-debugging-port=0','--no-first-run','--no-default-browser-check','--disable-sync','--disable-background-mode','--app='+url],{cwd:ROOT,windowsHide:false,stdio:'ignore'});
-    let launchError;this.child.on('error',error=>{launchError=error;});
-    const deadline=Date.now()+20000;let endpoint;
-    while(Date.now()<deadline){
-      // Edge may hand the window to a new browser process and exit with 0.
-      // The profile's control endpoint, not the launcher PID, owns its lifetime.
-      if(launchError)throw launchError;if(this.child.exitCode!==null&&this.child.exitCode!==0)throw Error('無法開啟專用視窗，請稍候重試。');
-      try{const [port,route]=(await fsp.readFile(path.join(this.profile,'DevToolsActivePort'),'utf8')).trim().split(/\r?\n/);if(/^\d+$/.test(port)&&Number(port)>0&&Number(port)<=65535&&/^\/devtools\/browser\/[a-zA-Z0-9-]+$/.test(route)){endpoint='ws://127.0.0.1:'+port+route;break;}}catch{}
-      await new Promise(r=>setTimeout(r,100));
-    }
-    if(!endpoint)throw Error('專用視窗啟動逾時，請重新開啟工具。');
-    this.socket=new WebSocket(endpoint);
-    await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('無法連接專用視窗。')),5000);this.socket.addEventListener('open',()=>{clearTimeout(timer);resolve();},{once:true});this.socket.addEventListener('error',()=>{clearTimeout(timer);reject(Error('無法連接專用視窗。'));},{once:true});});
-    this.socket.addEventListener('message',event=>{
-      let message;try{message=JSON.parse(event.data);}catch{return;}
-      const waiting=this.pending.get(message.id);
-      if(waiting){clearTimeout(waiting.timer);this.pending.delete(message.id);if(message.error)waiting.reject(Error(message.error.message));else waiting.resolve(message.result);}
-      if(message.method==='Browser.downloadWillBegin')this.downloading.add(message.params.guid);
-      if(message.method==='Browser.downloadProgress'&&message.params.state!=='inProgress')this.downloading.delete(message.params.guid);
-      if(message.method==='Target.targetDestroyed'&&message.params.targetId===this.mainTarget)this.disconnected();
-    });
-    this.socket.addEventListener('close',()=>{for(const p of this.pending.values()){clearTimeout(p.timer);p.reject(Error('工具視窗已結束。'));}this.pending.clear();this.disconnected();});
-    const {processInfo}=await this.command('SystemInfo.getProcessInfo');this.browserPid=processInfo.find(p=>p.type==='browser')?.id;
-    if(!Number.isInteger(this.browserPid)||this.browserPid<=0)throw Error('無法確認專用視窗程序。');
-    this.browserStarted=await this.ownedProcess(false);if(!this.browserStarted)throw Error('專用視窗程序不屬於此工具。');
-    await this.command('Browser.setDownloadBehavior',{behavior:'default',eventsEnabled:true});
-    const {targetInfos}=await this.command('Target.getTargets');this.mainTarget=targetInfos.find(t=>t.type==='page'&&t.url.startsWith(origin+'/'))?.targetId;
-    if(!this.mainTarget)throw Error('專用視窗未載入工具畫面。');
-    await this.command('Target.setDiscoverTargets',{discover:true});
-  }
-  disconnected(){this.downloading.clear();if(!closing){windowGone=true;if(!browserDownloads.active)shutdown();}}
-  async downloads(){
-    const url=path.basename(this.executable).toLowerCase()==='msedge.exe'?'edge://downloads/':'chrome://downloads/';
-    const {targetInfos}=await this.command('Target.getTargets');
-    const target=targetInfos.find(t=>t.type==='page'&&t.url.startsWith(url));
-    const id=target?.targetId||(await this.command('Target.createTarget',{url,newWindow:true})).targetId;
-    await this.activate(id);
-  }
-  async close(){
-    if(this.socket?.readyState===WebSocket.OPEN)await this.command('Browser.close').catch(()=>{});
-    const alive=()=>{if(!this.browserPid)return false;try{process.kill(this.browserPid,0);return true;}catch{return false;}};
-    const end=Date.now()+3000;while(alive()&&Date.now()<end)await new Promise(r=>setTimeout(r,100));
-    // The PID comes from the fresh endpoint in our own profile. Recheck its
-    // executable and creation time before a kill, including after PID recycling.
-    if(alive()&&this.browserStarted)await this.ownedProcess(true);
-    this.socket?.close();if(this.lock){await this.lock.close();this.lock=null;await fsp.unlink(path.join(this.profile,'clippocket-owner.json')).catch(()=>{});}
-  }
-  ownedProcess(terminate){
-    const script="$p=Get-Process -Id $env:CLIPPOCKET_WINDOW_PID -ErrorAction SilentlyContinue; if(!$p){exit 0}; $stamp=$p.StartTime.ToUniversalTime().ToString('o'); if($p.Path -ine $env:CLIPPOCKET_WINDOW_EXE){exit 2}; if($env:CLIPPOCKET_WINDOW_KILL -eq '1'){if($stamp -ne $env:CLIPPOCKET_WINDOW_STARTED){exit 3}; & ($env:SystemRoot+'\\System32\\taskkill.exe') /PID $p.Id /T /F | Out-Null; exit $LASTEXITCODE}; [Console]::Write($stamp)";
-    return new Promise((resolve,reject)=>{let text='';const p=spawn(path.join(process.env.SystemRoot||'C:\\Windows','System32','WindowsPowerShell','v1.0','powershell.exe'),['-NoProfile','-NonInteractive','-Command',script],{windowsHide:true,env:{...process.env,CLIPPOCKET_WINDOW_PID:String(this.browserPid),CLIPPOCKET_WINDOW_EXE:this.executable,CLIPPOCKET_WINDOW_PROFILE:this.profile,CLIPPOCKET_WINDOW_KILL:terminate?'1':'0',CLIPPOCKET_WINDOW_STARTED:this.browserStarted||''},stdio:['ignore','pipe','ignore']});p.stdout.setEncoding('utf8');p.stdout.on('data',x=>text+=x);p.once('error',reject);p.once('exit',code=>code===0?resolve(text.trim()):reject(Error('無法確認專用視窗的程序擁有權。')));});
-  }
-}
-const toolWindow=new ToolWindow();let windowGone=false;
-function canUpdate(){if(state.busy||browserDownloads.active||toolWindow.downloading.size)throw Error('請先等待目前工作與瀏覽器儲存完成，再更新工具。');}
+function canUpdate(){if(state.busy||browserDownloads.active)throw Error('請先等待目前工作與瀏覽器儲存完成，再更新工具。');}
 for(const dir of [DATA,WORK])fs.mkdirSync(dir,{recursive:true});
 try{state.folder=JSON.parse(fs.readFileSync(path.join(DATA,'settings.json'),'utf8')).folder;}catch{}
 if(!state.folder||!path.isAbsolute(state.folder))state.folder=path.join(ROOT,'Downloads');
@@ -224,6 +138,7 @@ async function download(input,jobId) {
   });
 }
 function stopChild(){cancelled=true;const proc=activeProcess;if(proc&&proc.pid){spawn(path.join(process.env.SystemRoot||'C:\\Windows','System32','taskkill.exe'),['/PID',String(proc.pid),'/T','/F'],{windowsHide:true,stdio:'ignore'});}}
+function openExternal(value){spawn(path.join(process.env.SystemRoot||'C:\\Windows','explorer.exe'),[value],{windowsHide:false,detached:true,stdio:'ignore'}).unref();}
 function openPath(args) {
   return new Promise((resolve,reject)=>{
     const child=spawn(path.join(process.env.SystemRoot||'C:\\Windows','explorer.exe'),args,
@@ -243,21 +158,20 @@ async function handle(req,res) {
     const url=new URL(req.url,origin);
     if(req.headers.host!==new URL(origin).host)return json(res,403,{error:'無效的本機連線。'});
     if(req.headers.origin&&req.headers.origin!==origin)return json(res,403,{error:'拒絕其他網站的請求。'});
-    if(url.pathname==='/health'&&req.method==='GET')return json(res,ready?200:503,{app:'ClipPocket',version:APP_VERSION});
+    if(url.pathname==='/health'&&req.method==='GET')return json(res,200,{app:'ClipPocket',version:APP_VERSION});
     if(url.pathname.startsWith('/download/')){if(updates.busy)return json(res,409,{error:'工具正在更新，請等重開後再下載。'});return await browserDownloads.serve(req,res,url.pathname.slice(10));}
     if(url.pathname.startsWith('/api/')) {
       if(req.headers['x-clippocket-token']!==TOKEN)return json(res,403,{error:'請由工具開啟的視窗操作。'});
       if(req.method==='GET'&&url.pathname==='/api/state'){
         let updateResult=null;try{updateResult=JSON.parse(fs.readFileSync(path.join(DATA,'update-result.json'),'utf8').replace(/^\uFEFF/,''));}catch{}
-        return json(res,200,{...state,version:APP_VERSION,windowMode:toolWindow.child?'managed':'browser',update:{...updates.state,busy:updates.busy,result:updateResult}});
+        return json(res,200,{...state,version:APP_VERSION,windowMode:'browser',update:{...updates.state,busy:updates.busy,result:updateResult}});
       }
       if(req.method!=='POST')return json(res,405,{error:'Method not allowed'});
       if(!String(req.headers['content-type']||'').startsWith('application/json'))return json(res,415,{error:'請使用 JSON 請求。'});
       const body=await readBody(req);
       if(updates.busy&&url.pathname!=='/api/heartbeat')throw Error('工具正在更新，請等待完成後自動重開。');
       switch(url.pathname) {
-        case '/api/show-window':await toolWindow.open(origin+'/#'+TOKEN);return json(res,200,{ok:true});
-        case '/api/downloads':if(!toolWindow.child)throw Error('請在瀏覽器下載清單查看。');await toolWindow.downloads();return json(res,200,{ok:true});
+        case '/api/show-window':openExternal(origin+'/#'+TOKEN);return json(res,200,{ok:true});
         case '/api/update-check':updates.check().catch(e=>log(e.message));return json(res,202,{ok:true});
         case '/api/update-install':canUpdate();if(!updates.info)throw Error('請先檢查是否有新版。');updates.install(canUpdate,shutdown).catch(e=>log(e.message));return json(res,202,{ok:true});
         case '/api/heartbeat':lastBeat=Date.now();return json(res,200,{ok:true});
@@ -282,7 +196,7 @@ async function handle(req,res) {
           await openPath(['/select,',file.path]);return json(res,200,{ok:true});
         }
         case '/api/shutdown':
-          if(browserDownloads.active||toolWindow.downloading.size)throw Error('瀏覽器仍在接收檔案，請等傳送完成後再關閉工具。');
+          if(browserDownloads.active)throw Error('瀏覽器仍在接收檔案，請等傳送完成後再關閉工具。');
           json(res,200,{ok:true});return setTimeout(shutdown,150);
         default:return json(res,404,{error:'Not found'});
       }
@@ -296,14 +210,8 @@ async function handle(req,res) {
     if(!res.headersSent)json(res,400,{error:error.message});else res.destroy(error);
   }
 }
-async function shutdown(){if(closing||browserDownloads.active)return;closing=true;stopChild();await browserDownloads.close().catch(e=>log(e.message));try{const record=JSON.parse(await fsp.readFile(INSTANCE,'utf8'));if(record.pid===process.pid)await fsp.unlink(INSTANCE);}catch{}if(server)server.close();await toolWindow.close().catch(e=>log(e.message));setTimeout(()=>process.exit(0),1200).unref();}
-async function main(){
-for(const file of [ENGINE,NODE,FFMPEG,FFPROBE])if(!fs.existsSync(file))throw Error('缺少必要檔案：'+file+'。請完整解壓縮整個工具資料夾。');
-if(!NO_OPEN){
-  let existing;
-  try{const old=JSON.parse(fs.readFileSync(INSTANCE,'utf8'));if(Number.isInteger(old.port)&&old.port>0&&old.port<=65535&&typeof old.token==='string'){const oldOrigin='http://127.0.0.1:'+old.port;const response=await fetch(oldOrigin+'/health',{signal:AbortSignal.timeout(1000)});const health=await response.json();if(health.app==='ClipPocket'&&health.version===APP_VERSION)existing={old,oldOrigin};}}catch{}
-  if(existing){if(!NO_BROWSER){const {old,oldOrigin}=existing;const shown=await fetch(oldOrigin+'/api/show-window',{method:'POST',headers:{'X-ClipPocket-Token':old.token,'Content-Type':'application/json'},body:'{}',signal:AbortSignal.timeout(30000)});if(!shown.ok)throw Error((await shown.json()).error||'無法顯示已開啟的工具視窗。');}return;}
-}
+async function shutdown(){if(closing||browserDownloads.active)return;closing=true;stopChild();await browserDownloads.close().catch(e=>log(e.message));try{const record=JSON.parse(await fsp.readFile(INSTANCE,'utf8'));if(record.pid===process.pid)await fsp.unlink(INSTANCE);}catch{}if(server)server.close();setTimeout(()=>process.exit(0),1200).unref();}
+async function main(){for(const file of [ENGINE,NODE,FFMPEG,FFPROBE])if(!fs.existsSync(file))throw Error('缺少必要檔案：'+file+'。請完整解壓縮整個工具資料夾。');if(!NO_OPEN){try{const old=JSON.parse(fs.readFileSync(INSTANCE,'utf8'));const response=await fetch('http://127.0.0.1:'+old.port+'/health',{signal:AbortSignal.timeout(1000)});const health=await response.json();if(health.app==='ClipPocket'&&health.version===APP_VERSION){if(!NO_BROWSER)openExternal('http://127.0.0.1:'+old.port+'/#'+old.token);return;}}catch{}}
 await browserDownloads.prepare();
-server=http.createServer(handle);await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});origin='http://127.0.0.1:'+server.address().port;await fsp.writeFile(INSTANCE,JSON.stringify({pid:process.pid,port:server.address().port,token:TOKEN}),{mode:0o600});if(!NO_OPEN&&!NO_BROWSER)await toolWindow.open(origin+'/#'+TOKEN);ready=true;console.log('ClipPocket ready at '+origin);if(!NO_OPEN){updates.check();setInterval(()=>updates.check(),6*60*60*1000).unref();}setInterval(()=>{if(windowGone&&!browserDownloads.active)shutdown();if(!NO_OPEN&&!toolWindow.child&&!state.busy&&!updates.busy&&!browserDownloads.active&&Date.now()-lastBeat>180000&&Date.now()-startedAt>180000)shutdown();},1000).unref();}
-process.on('SIGINT',shutdown);process.on('SIGTERM',shutdown);process.on('uncaughtException',error=>{try{fs.writeFileSync(path.join(DATA,'startup-error.txt'),error.stack||String(error));}catch{}shutdown();});main().catch(async error=>{console.error(error.message);fs.writeFileSync(path.join(DATA,'startup-error.txt'),error.stack||String(error));process.exitCode=1;await shutdown();});
+server=http.createServer(handle);await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});origin='http://127.0.0.1:'+server.address().port;await fsp.writeFile(INSTANCE,JSON.stringify({pid:process.pid,port:server.address().port,token:TOKEN}),{mode:0o600});if(!NO_OPEN&&!NO_BROWSER)openExternal(origin+'/#'+TOKEN);console.log('ClipPocket ready at '+origin);if(!NO_OPEN){updates.check();setInterval(()=>updates.check(),6*60*60*1000).unref();}setInterval(()=>{if(!NO_OPEN&&!state.busy&&!updates.busy&&!browserDownloads.active&&Date.now()-lastBeat>180000&&Date.now()-startedAt>180000)shutdown();},15000).unref();}
+process.on('SIGINT',shutdown);process.on('SIGTERM',shutdown);process.on('uncaughtException',error=>{try{fs.writeFileSync(path.join(DATA,'startup-error.txt'),error.stack||String(error));}catch{}shutdown();});main().catch(error=>{console.error(error.message);fs.writeFileSync(path.join(DATA,'startup-error.txt'),error.stack||String(error));process.exitCode=1;});
