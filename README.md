@@ -77,6 +77,17 @@ ClipPocket 自有程式採 [MIT 授權](LICENSE)。隨附第三方元件保留�
 
 ## 下載頁的版本更新
 
+### 新版交付流程
+
+依專案使用者要求，每次交付工具新版時，都要一起完成 GitHub 下載版本與公開下載頁的更新。使用者明確要求只做本機、草稿或暫不發布時，依該次要求執行；只修改流程文件不需要另發工具版本。
+
+1. 完成程式修改、版本號及相關測試，保留既有設定、下載紀錄與已儲存檔案。
+2. 使用 `portable-downloader/build-portable.ps1` 建立免安裝 ZIP 與 `.sha256`，再以 `portable-downloader/tests/update-package.cjs` 驗證最終 ZIP；發佈的包必須與測試過的 SHA-256 一致。
+3. 將對應程式碼推送至 GitHub。操作或功能有變動時，同步更新 `docs/index.html` 的教學與常見問題；版本、大小和下載連結繼續由 `docs/release.js` 讀取最新正式 Release。
+4. 建立對應版本的 GitHub Release，附上 ZIP 與 `.sha256`，核對上傳附件的 SHA-256 後發布為正式版並指定 Latest，指向對應程式碼提交。隨附元件變更時，同步更新授權與對應來源資料。
+5. 實際開啟公開下載頁，確認最新版本、大小、兩個下載按鈕及校驗碼連結均指向該次正式版；確認免安裝包可下載、操作說明已部署，並確認正式 Release 可供工具內建更新取得。
+6. 回報 GitHub 版本與下載頁連結，以及已完成的驗證。若發布或部署未完成，明確指出未完成的部分，完成後才宣告整次更新交付完成。
+
 下載頁每次開啟時，會透過公開 GitHub API 讀取最新正式 Release，自動更新版本、檔案大小、兩個下載按鈕及該檔案的校驗碼連結，不需要重新部署頁面。
 
 發佈新版時，使用正式 Release（非草稿、非 prerelease），並附上打包腳本產生的 `ClipPocket-版本號-Windows-x64-portable.zip`；版本號須對應 Release tag（例如 tag `v0.4.0` 搭配 `ClipPocket-0.4.0-Windows-x64-portable.zip`），並依 GitHub 的 Latest 設定指定最新正式版。也支援固定附件名稱 `ClipPocket-Windows-x64-portable.zip`。校驗碼附件使用相同檔名再加 `.sha256`。
