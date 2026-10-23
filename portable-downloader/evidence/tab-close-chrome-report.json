@@ -1,0 +1,11 @@
+{
+  "version": "0.4.2",
+  "browser": "chrome.exe",
+  "checks": [
+    "script-opened tool tab closes; local program exits; unrelated tab stays open",
+    "browser-blocked close retains a clear fallback and still stops the tool",
+    "rejected shutdown keeps the tab and local process alive"
+  ],
+  "status": "pass",
+  "testedAt": "2026-10-23T15:39:02.426Z"
+}

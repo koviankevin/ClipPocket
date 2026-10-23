@@ -15,6 +15,8 @@ $updateReport = Get-Content -Raw -LiteralPath (Join-Path $appRoot 'evidence\upda
 if ($updateReport.status -ne 'pass' -or $updateReport.version -ne $version) { throw 'Current-version update and rollback checks must pass.' }
 $interfaceReport = Get-Content -Raw -LiteralPath (Join-Path $appRoot 'evidence\interface-report.json') | ConvertFrom-Json
 if ($interfaceReport.status -ne 'pass' -or $interfaceReport.version -ne $version) { throw 'Current-version readability and shutdown UI checks must pass.' }
+$tabReport = Get-Content -Raw -LiteralPath (Join-Path $appRoot 'evidence\tab-close-report.json') | ConvertFrom-Json
+if ($tabReport.status -ne 'pass' -or $tabReport.version -ne $version) { throw 'Current-version automatic tab closing and browser fallback checks must pass.' }
 $buildRoot = Join-Path $workspaceRoot ('portable-build-cache\package-' + [guid]::NewGuid().ToString('N'))
 $stageRoot = Join-Path $buildRoot 'ClipPocket'
 $releaseRoot = Join-Path $workspaceRoot 'releases'

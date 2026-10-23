@@ -113,6 +113,11 @@ q('installUpdate').onclick=async()=>{q('installUpdate').disabled=true;try{await 
 q('cancel').onclick=()=>api('cancel',{}).catch(localError);
 q('chooseFolder').onclick=async()=>{q('chooseFolder').disabled=true;try{await api('folder',{});}catch(error){localError(error);}finally{q('chooseFolder').disabled=false;}};
 q('openFolder').onclick=async()=>{try{await api('open-folder',{});notice('已開啟下載資料夾。');}catch(error){localError(error);}};
+function closeToolTab(){
+  q('closedMessage').textContent='本機工具已停止，正在關閉這個分頁…';
+  try{window.close();}catch{}
+  setTimeout(()=>{if(!window.closed){q('closedMessage').textContent='本機工具已停止。';q('closedHint').textContent='瀏覽器未允許自動關閉這個分頁，請按 Ctrl＋W 關閉。下次雙擊 ClipPocket.exe 即可重新使用。';}},400);
+}
 q('shutdown').onclick=async()=>{
   if(closingUI||stopped)return;
   closingUI=true;q('shutdown').disabled=true;q('shutdown').textContent='正在關閉…';
@@ -126,6 +131,7 @@ q('shutdown').onclick=async()=>{
   q('closedTitle').textContent=disconnected?'ClipPocket 已關閉':'正在結束 ClipPocket';
   q('closedMessage').textContent=disconnected?'本機工具已停止，可以關閉這個分頁。':'關閉請求已送出；若仍有處理程序，請稍候再檢查。';
   q('closedHint').textContent='按 Ctrl＋W 可關閉分頁。下次雙擊 ClipPocket.exe 即可重新使用。';
+  if(disconnected)closeToolTab();
 };
 q('thumbImg').onerror=()=>q('thumbImg').hidden=true;
 q('mode').onchange=()=>renderQuality(current?.video);

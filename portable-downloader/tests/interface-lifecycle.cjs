@@ -9,7 +9,9 @@ async function api(route,body){const r=await fetch('http://127.0.0.1:'+instance.
 (async()=>{
  try{
   await launch();browser=await chromium.launch({executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',headless:true});const context=await browser.newContext({viewport:{width:1380,height:950}}),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto('http://127.0.0.1:'+instance.port+'/#'+instance.token);await page.waitForFunction(()=>document.querySelector('#folderPath').textContent.length>0);
+  // Keep a previous document so browser policy deliberately blocks auto-close;
+  // tab-close.cjs separately covers successful automatic closing.
+  await page.goto('http://127.0.0.1:'+instance.port+'/style.css');await page.goto('http://127.0.0.1:'+instance.port+'/#'+instance.token);await page.waitForFunction(()=>document.querySelector('#folderPath').textContent.length>0);
   const other=await page.context().newPage();await other.goto('http://127.0.0.1:'+instance.port+'/#'+instance.token);await other.waitForFunction(()=>document.querySelector('#folderPath').textContent.length>0);
   // Record both signals independently: a dead process alone is easy to miss
   // when the remaining browser tab still looks like the working interface.

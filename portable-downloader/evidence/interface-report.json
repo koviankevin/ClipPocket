@@ -1,5 +1,5 @@
 {
-  "version": "0.4.1",
+  "version": "0.4.2",
   "checks": [
     "shutdown terminates backend and replaces the working UI in all open tabs",
     "readable control sizes and supporting text",
@@ -8,5 +8,5 @@
     "in-flight polling cannot overwrite the closed state"
   ],
   "status": "pass",
-  "testedAt": "2026-10-23T15:15:51.272Z"
+  "testedAt": "2026-10-23T15:31:52.902Z"
 }
