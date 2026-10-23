@@ -1,0 +1,16 @@
+{
+  "status": "pass",
+  "officialArtifactSha256": "f89c6c43969d92c8b95cb459a90fbafbc743d3d3cc4d16c610317f9ceef922f8",
+  "cacheSha256": "97d842d8233e8311f07d60317c875b077dfb7fe3ff747d016f011e7c07b6947d",
+  "splitRecombination": "pass",
+  "parts": [
+    {
+      "name": "ffmpeg-dependency-sources-20261022.tar.gz.part01",
+      "bytes": 1610612736
+    },
+    {
+      "name": "ffmpeg-dependency-sources-20261022.tar.gz.part02",
+      "bytes": 599090237
+    }
+  ]
+}
