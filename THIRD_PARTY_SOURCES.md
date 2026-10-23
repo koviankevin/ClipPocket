@@ -16,6 +16,8 @@
 
 相依來源快取出處：[官方 Actions run 39776938430](https://github.com/BtbN/FFmpeg-Builds/actions/runs/39776938430)，artifact `download-cache`（ID `12424698518`），上游紀錄的 head commit 為上述建置配方版本。此副本保存於 ClipPocket Release，避免只依賴會過期的 Actions artifact。
 
+官方 artifact ZIP 的 SHA-256 為 `f89c6c43969d92c8b95cb459a90fbafbc743d3d3cc4d16c610317f9ceef922f8`；下載後會與 GitHub API 提供的 digest 核對。解出其中的 `cache.tar.gz` 後再分割，兩個來源 part 的 SHA-256 及重組後的完整檔案 SHA-256 另記於 Release 的來源校驗碼清單。
+
 原始碼來源：[FFmpeg 固定 commit](https://github.com/FFmpeg/FFmpeg/tree/4cf298e66a20dd90e8b7c62333ab5812596835ec)、[BtbN 固定建置配方](https://github.com/BtbN/FFmpeg-Builds/tree/937868360a21d711ec94a33f5591d345ad9b7754)。BtbN 在配方的 `scripts.d` 中記錄相依套件的 repo、commit／archive 與補丁。
 
 重組分割檔（PowerShell，兩個 part 必須先下載到同一目錄）：
@@ -43,6 +45,8 @@ FFmpeg 為 GPLv3 建置，授權全文見 `portable-downloader/licenses/ffmpeg-G
 - 原專案的 [固定版本原始碼](https://github.com/yt-dlp/yt-dlp/tree/2026.10.21)，包括打包與建置腳本。
 - 隨官方執行檔提供的完整第三方授權清單：`portable-downloader/licenses/yt-dlp-THIRD_PARTY_LICENSES.txt`。清單列出各元件的原專案來源；其中的上游來源取得說明及聯絡方式也保留原文。
 - ClipPocket Bilibili 相容橋接的原始碼位於 `portable-downloader/compat/clippocket/yt_dlp_plugins/extractor/bilibili_compat.py`，不修改官方執行檔。
+
+官方 Windows 執行檔實際回報的相依版本包括 Mutagen `1.48.1`（GPL-2.0-or-later）及 certifi `2026.10.19`（MPL-2.0）。同一 ClipPocket Release 另外保存由 PyPI 取得、核對官方 SHA-256 的 `mutagen-1.48.1-source.tar.gz` 與 `certifi-2026.10.19-source.tar.gz`。上游第三方清單也包含其他平台建置的元件，不代表每個列出的元件都在 Windows binary 中使用。
 
 ## Node.js
 
