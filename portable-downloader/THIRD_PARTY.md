@@ -14,7 +14,7 @@ FFmpeg 建置配方與相依元件來源：https://github.com/BtbN/FFmpeg-Builds
 
 yt-dlp bundled executable 內含其他元件，請保留完整 THIRD_PARTY_LICENSES。Node LICENSE 也含 bundled dependencies 的 notices。FFmpeg GPL shared build 的 GPL 授權適用於隨附 FFmpeg 元件。
 
-公開版本與下載：https://github.com/koviankevin/ClipPocket/releases 。同一 Release 提供 FFmpeg 固定版本原始碼、建置配方與官方相依原始碼快取；來源與重組說明見 SOURCE_CODE.md。ClipPocket 自有程式使用 MIT 授權，第三方元件仍依各自授權。
+公開版本與下載：https://github.com/koviankevin/ClipPocket/releases 。v0.3.0 的固定來源附件繼續提供目前隨附 FFmpeg 的原始碼、建置配方與官方相依原始碼快取（https://github.com/koviankevin/ClipPocket/releases/tag/v0.3.0）；來源與重組說明見 SOURCE_CODE.md。ClipPocket 自有程式使用 MIT 授權，第三方元件仍依各自授權。
 
 ## 取得檔案的 SHA-256
 

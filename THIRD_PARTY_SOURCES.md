@@ -6,7 +6,7 @@
 
 本版隨附 BtbN `autobuild-2026-10-22-13-06` 的 Windows x64 GPL shared 9.0 建置，程式版本為 `n9.0.2-33-g4cf298e66a-20261022`。官方 binary 未修改，實際檔案雜湊見 `runtime-manifest.json`。
 
-同一 ClipPocket Release 提供：
+目前執行元件沿用 v0.3.0；完整對應來源永久保留於 [v0.3.0 來源附件](https://github.com/koviankevin/ClipPocket/releases/tag/v0.3.0)，與程式下載同樣免登入取得：
 
 - `ffmpeg-4cf298e66a-source.tar.gz`：FFmpeg commit `4cf298e66a20dd90e8b7c62333ab5812596835ec` 的原始碼快照。
 - `FFmpeg-Builds-9378683-source.tar.gz`：BtbN 建置配方 commit `937868360a21d711ec94a33f5591d345ad9b7754`，包含相依套件的固定來源版本、補丁、授權檔案及建置腳本。
@@ -14,7 +14,7 @@
 - `ffmpeg-build-configuration.txt`：實際隨附 binary 回報的建置參數。
 - `SOURCE_SHA256SUMS.txt`：各來源附件的校驗碼。
 
-相依來源快取出處：[官方 Actions run 39776938430](https://github.com/BtbN/FFmpeg-Builds/actions/runs/39776938430)，artifact `download-cache`（ID `12424698518`），上游紀錄的 head commit 為上述建置配方版本。此副本保存於 ClipPocket Release，避免只依賴會過期的 Actions artifact。
+相依來源快取出處：[官方 Actions run 39776938430](https://github.com/BtbN/FFmpeg-Builds/actions/runs/39776938430)，artifact `download-cache`（ID `12424698518`），上游紀錄的 head commit 為上述建置配方版本。此副本保存於 ClipPocket v0.3.0 Release，避免只依賴會過期的 Actions artifact。
 
 官方 artifact ZIP 的 SHA-256 為 `f89c6c43969d92c8b95cb459a90fbafbc743d3d3cc4d16c610317f9ceef922f8`；下載後會與 GitHub API 提供的 digest 核對。解出其中的 `cache.tar.gz` 後再分割，兩個來源 part 的 SHA-256 及重組後的完整檔案 SHA-256 另記於 Release 的來源校驗碼清單。
 
@@ -41,7 +41,7 @@ FFmpeg 為 GPLv3 建置，授權全文見 `portable-downloader/licenses/ffmpeg-G
 
 官方執行檔版本 `2026.10.21`，SHA-256 `33121d192d706e62f684a06f80918e3f3a8ba52ac3a65213b6951c39c7d9f555`，未修改。
 
-- [官方同版本 Release](https://github.com/yt-dlp/yt-dlp/releases/tag/2026.10.21)；同一 ClipPocket Release 另保留 `yt-dlp-2026.10.21-source.tar.gz`。
+- [官方同版本 Release](https://github.com/yt-dlp/yt-dlp/releases/tag/2026.10.21)；ClipPocket v0.3.0 Release 另保留 `yt-dlp-2026.10.21-source.tar.gz`。
 - 原專案的 [固定版本原始碼](https://github.com/yt-dlp/yt-dlp/tree/2026.10.21)，包括打包與建置腳本。
 - 隨官方執行檔提供的完整第三方授權清單：`portable-downloader/licenses/yt-dlp-THIRD_PARTY_LICENSES.txt`。清單列出各元件的原專案來源；其中的上游來源取得說明及聯絡方式也保留原文。
 - ClipPocket Bilibili 相容橋接的原始碼位於 `portable-downloader/compat/clippocket/yt_dlp_plugins/extractor/bilibili_compat.py`，不修改官方執行檔。

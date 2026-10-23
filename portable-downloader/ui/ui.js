@@ -44,7 +44,7 @@ function renderQuality(video){
     q('height').value=sameVideo&&options.some(option=>option.id===previous)?previous:'best';
   }
   q('qualityHint').textContent=matching?video.qualityNotice:'先讀取影片資訊，即可選擇這支影片實際提供的解析度與幀率。';
-  const disabled=Boolean(current?.busy)||selectedFormat()==='mp3';q('height').disabled=disabled;q('mode').disabled=disabled;
+  const disabled=Boolean(current?.busy||current?.update?.busy)||selectedFormat()==='mp3';q('height').disabled=disabled;q('mode').disabled=disabled;
   q('modeHint').textContent=q('mode').value==='original'?'保留來源編碼，通常不需轉檔；部分播放器可能無法播放。':'必要時轉成 H.264＋AAC，保留所選解析度與幀率；高畫質轉檔較久。';
 }
 function renderHistory(files){
@@ -60,8 +60,8 @@ function renderHistory(files){
   }
 }
 function render(state){
-  current=state;for(const id of ['url','paste','analyze','download','chooseFolder','delivery'])q(id).disabled=state.busy;
-  document.querySelectorAll('input[name=format], [data-sample]').forEach(el=>el.disabled=state.busy);
+  current=state;renderUpdate(state);for(const id of ['url','paste','analyze','download','chooseFolder','delivery'])q(id).disabled=state.busy||state.update?.busy;
+  document.querySelectorAll('input[name=format], [data-sample]').forEach(el=>el.disabled=state.busy||state.update?.busy);
   q('cancel').hidden=!state.busy;q('status').classList.toggle('error',Boolean(state.error));q('statusText').textContent=state.error||state.message;q('statusDetail').textContent=state.detail||'';
   q('folderPath').textContent=state.folder;q('folderPath').title=state.folder;q('log').textContent=state.log.join('\n');
   q('progressTrack').hidden=!state.busy;q('progressTrack').classList.toggle('indeterminate',state.progress===null);q('progressFill').style.width=(state.progress||0)+'%';
@@ -71,6 +71,21 @@ function render(state){
     if(state.video.thumbnail&&q('thumbImg').dataset.url!==state.video.thumbnail){q('thumbImg').dataset.url=state.video.thumbnail;q('thumbImg').hidden=false;q('thumbImg').src=state.video.thumbnail;}
   }
   renderQuality(state.video);renderHistory(state.files);
+}
+function renderUpdate(state){
+  const update=state.update;if(!update)return;
+  q('appVersion').textContent='本機版 v'+state.version;
+  q('updateTitle').textContent=update.latest?'可更新至 v'+update.latest:'版本更新';
+  q('updateMessage').textContent=update.message;
+  if(!update.busy&&!update.error&&update.result){q('updateMessage').textContent+=' '+update.result.message;}
+  q('updateWarning').hidden=!update.latest||update.phase==='restarting';
+  q('checkUpdate').disabled=update.busy||update.phase==='checking';
+  q('installUpdate').hidden=!update.latest;q('installUpdate').disabled=update.busy||state.busy||update.phase==='checking';
+  q('shutdown').disabled=Boolean(update.busy);
+  q('updateProgress').hidden=!['downloading','verifying'].includes(update.phase);
+  if(update.progress===null)q('updateProgress').removeAttribute('value');else q('updateProgress').value=update.progress;
+  q('updatePanel').classList.toggle('update-available',Boolean(update.latest));
+  if(update.phase==='restarting'){stopped=true;document.querySelectorAll('button,input,select').forEach(el=>el.disabled=true);}
 }
 async function poll(){if(stopped)return;try{const state=await api('state');render(state);await handoff(state);if(clientError){q('status').classList.add('error');q('statusText').textContent=clientError;}}catch{q('statusText').textContent='工具連線已中斷。請重新開啟 ClipPocket。';}setTimeout(poll,700);}
 function changedUrl(){clientError=null;renderQuality(current?.video);q('videoInfo').hidden=!inputMatches(current?.video);}
@@ -83,6 +98,8 @@ q('download').onclick=async()=>{
   try{const result=await api('download',{url:q('url').value,format:selectedFormat(),quality:q('height').value,mode:q('mode').value,delivery:q('delivery').value});pendingJob=q('delivery').value==='browser'?result.jobId:null;}
   catch(error){localError(error);q('download').disabled=false;}
 };
+q('checkUpdate').onclick=()=>api('update-check',{}).catch(error=>notice(error.message));
+q('installUpdate').onclick=async()=>{q('installUpdate').disabled=true;try{await api('update-install',{});}catch(error){notice(error.message);q('installUpdate').disabled=false;}};
 q('cancel').onclick=()=>api('cancel',{}).catch(localError);
 q('chooseFolder').onclick=async()=>{q('chooseFolder').disabled=true;try{await api('folder',{});}catch(error){localError(error);}finally{q('chooseFolder').disabled=false;}};
 q('openFolder').onclick=async()=>{try{await api('open-folder',{});notice('已開啟下載資料夾。');}catch(error){localError(error);}};

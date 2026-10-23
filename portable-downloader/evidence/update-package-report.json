@@ -1,0 +1,17 @@
+{
+  "status": "pass",
+  "version": "0.4.0",
+  "testedAt": "2026-10-23T13:47:55.962Z",
+  "archiveSha256": "79e496fb67b597b5af7f202a44f18d23bebcea1204599a0cb8c1245a797a8335",
+  "fromVersion": "0.3.9",
+  "toVersion": "0.4.0",
+  "checks": [
+    "real portable ZIP fully validated",
+    "one-click browser UI installs and restarts",
+    "settings, history, saved videos and personal files preserved",
+    "authentication and origin guards",
+    "active media job blocks updating",
+    "desktop and 320px mobile layout",
+    "new version reports successful update"
+  ]
+}

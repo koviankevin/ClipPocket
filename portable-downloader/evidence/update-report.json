@@ -1,0 +1,57 @@
+{
+  "status": "pass",
+  "version": "0.4.0",
+  "testedAt": "2026-10-23T13:43:07.529Z",
+  "checks": [
+    {
+      "name": "successful update",
+      "status": "pass",
+      "preserves": [
+        "settings",
+        "history",
+        "saved videos",
+        "user-created files"
+      ]
+    },
+    {
+      "name": "startup failure rollback",
+      "status": "pass",
+      "preserves": [
+        "settings",
+        "history",
+        "saved videos",
+        "user-created files"
+      ]
+    },
+    {
+      "name": "tampered download",
+      "status": "pass",
+      "preserves": [
+        "settings",
+        "history",
+        "saved videos",
+        "user-created files"
+      ]
+    },
+    {
+      "name": "protected ZIP entry",
+      "status": "pass",
+      "preserves": [
+        "settings",
+        "history",
+        "saved videos",
+        "user-created files"
+      ]
+    },
+    {
+      "name": "user file collision",
+      "status": "pass",
+      "preserves": [
+        "settings",
+        "history",
+        "saved videos",
+        "user-created files"
+      ]
+    }
+  ]
+}

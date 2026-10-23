@@ -5,6 +5,7 @@ const path=require('node:path');
 const { qualityOptions, outputRequest, selectQuality }=require('./quality.cjs');
 const APP_VERSION=require('./version.json').version;
 const {BrowserDownloads,deliveryRequest}=require('./browser-downloads.cjs');
+const {Updates}=require('./updates.cjs');
 const http=require('node:http');
 const crypto=require('node:crypto');
 const {spawn}=require('node:child_process');
@@ -24,6 +25,8 @@ const NO_BROWSER=process.argv.includes('--no-browser');
 const TOKEN=crypto.randomBytes(32).toString('hex');
 let origin='',server,activeProcess=null,cancelled=false,closing=false,lastBeat=Date.now(),startedAt=Date.now();
 const state={busy:false,phase:'idle',message:'貼上網址，就能開始。',progress:null,detail:'',video:null,files:[],error:null,folder:'',log:[]};
+const updates=new Updates(ROOT,APP_VERSION);
+function canUpdate(){if(state.busy||browserDownloads.active)throw Error('請先等待目前工作與瀏覽器儲存完成，再更新工具。');}
 for(const dir of [DATA,WORK])fs.mkdirSync(dir,{recursive:true});
 try{state.folder=JSON.parse(fs.readFileSync(path.join(DATA,'settings.json'),'utf8')).folder;}catch{}
 if(!state.folder||!path.isAbsolute(state.folder))state.folder=path.join(ROOT,'Downloads');
@@ -156,14 +159,20 @@ async function handle(req,res) {
     if(req.headers.host!==new URL(origin).host)return json(res,403,{error:'無效的本機連線。'});
     if(req.headers.origin&&req.headers.origin!==origin)return json(res,403,{error:'拒絕其他網站的請求。'});
     if(url.pathname==='/health'&&req.method==='GET')return json(res,200,{app:'ClipPocket',version:APP_VERSION});
-    if(url.pathname.startsWith('/download/'))return await browserDownloads.serve(req,res,url.pathname.slice(10));
+    if(url.pathname.startsWith('/download/')){if(updates.busy)return json(res,409,{error:'工具正在更新，請等重開後再下載。'});return await browserDownloads.serve(req,res,url.pathname.slice(10));}
     if(url.pathname.startsWith('/api/')) {
       if(req.headers['x-clippocket-token']!==TOKEN)return json(res,403,{error:'請由工具開啟的視窗操作。'});
-      if(req.method==='GET'&&url.pathname==='/api/state')return json(res,200,state);
+      if(req.method==='GET'&&url.pathname==='/api/state'){
+        let updateResult=null;try{updateResult=JSON.parse(fs.readFileSync(path.join(DATA,'update-result.json'),'utf8').replace(/^\uFEFF/,''));}catch{}
+        return json(res,200,{...state,version:APP_VERSION,update:{...updates.state,busy:updates.busy,result:updateResult}});
+      }
       if(req.method!=='POST')return json(res,405,{error:'Method not allowed'});
       if(!String(req.headers['content-type']||'').startsWith('application/json'))return json(res,415,{error:'請使用 JSON 請求。'});
       const body=await readBody(req);
+      if(updates.busy&&url.pathname!=='/api/heartbeat')throw Error('工具正在更新，請等待完成後自動重開。');
       switch(url.pathname) {
+        case '/api/update-check':updates.check().catch(e=>log(e.message));return json(res,202,{ok:true});
+        case '/api/update-install':canUpdate();if(!updates.info)throw Error('請先檢查是否有新版。');updates.install(canUpdate,shutdown).catch(e=>log(e.message));return json(res,202,{ok:true});
         case '/api/heartbeat':lastBeat=Date.now();return json(res,200,{ok:true});
         case '/api/analyze':
           if(state.busy)throw Error('目前有工作進行中。');
@@ -203,5 +212,5 @@ async function handle(req,res) {
 async function shutdown(){if(closing||browserDownloads.active)return;closing=true;stopChild();await browserDownloads.close().catch(e=>log(e.message));try{const record=JSON.parse(await fsp.readFile(INSTANCE,'utf8'));if(record.pid===process.pid)await fsp.unlink(INSTANCE);}catch{}if(server)server.close();setTimeout(()=>process.exit(0),1200).unref();}
 async function main(){for(const file of [ENGINE,NODE,FFMPEG,FFPROBE])if(!fs.existsSync(file))throw Error('缺少必要檔案：'+file+'。請完整解壓縮整個工具資料夾。');if(!NO_OPEN){try{const old=JSON.parse(fs.readFileSync(INSTANCE,'utf8'));const response=await fetch('http://127.0.0.1:'+old.port+'/health',{signal:AbortSignal.timeout(1000)});const health=await response.json();if(health.app==='ClipPocket'&&health.version===APP_VERSION){if(!NO_BROWSER)openExternal('http://127.0.0.1:'+old.port+'/#'+old.token);return;}}catch{}}
 await browserDownloads.prepare();
-server=http.createServer(handle);await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});origin='http://127.0.0.1:'+server.address().port;await fsp.writeFile(INSTANCE,JSON.stringify({pid:process.pid,port:server.address().port,token:TOKEN}),{mode:0o600});if(!NO_OPEN&&!NO_BROWSER)openExternal(origin+'/#'+TOKEN);console.log('ClipPocket ready at '+origin);setInterval(()=>{if(!NO_OPEN&&!state.busy&&!browserDownloads.active&&Date.now()-lastBeat>180000&&Date.now()-startedAt>180000)shutdown();},15000).unref();}
+server=http.createServer(handle);await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});origin='http://127.0.0.1:'+server.address().port;await fsp.writeFile(INSTANCE,JSON.stringify({pid:process.pid,port:server.address().port,token:TOKEN}),{mode:0o600});if(!NO_OPEN&&!NO_BROWSER)openExternal(origin+'/#'+TOKEN);console.log('ClipPocket ready at '+origin);if(!NO_OPEN){updates.check();setInterval(()=>updates.check(),6*60*60*1000).unref();}setInterval(()=>{if(!NO_OPEN&&!state.busy&&!updates.busy&&!browserDownloads.active&&Date.now()-lastBeat>180000&&Date.now()-startedAt>180000)shutdown();},15000).unref();}
 process.on('SIGINT',shutdown);process.on('SIGTERM',shutdown);process.on('uncaughtException',error=>{try{fs.writeFileSync(path.join(DATA,'startup-error.txt'),error.stack||String(error));}catch{}shutdown();});main().catch(error=>{console.error(error.message);fs.writeFileSync(path.join(DATA,'startup-error.txt'),error.stack||String(error));process.exitCode=1;});

@@ -13,6 +13,11 @@ class Launcher {
             return;
         }
         try {
+            string lockPath=Path.Combine(folder,"data","update.lock");
+            if(File.Exists(lockPath)) {
+                try { using(var updateLock=new FileStream(lockPath,FileMode.Open,FileAccess.ReadWrite,FileShare.None)) {} }
+                catch(IOException) { MessageBox.Show("ClipPocket 正在更新，完成後會自動重開。","ClipPocket",MessageBoxButtons.OK,MessageBoxIcon.Information);return; }
+            }
             ProcessStartInfo start=new ProcessStartInfo(node,"\""+app+"\"");
             start.WorkingDirectory=folder;
             start.UseShellExecute=false;

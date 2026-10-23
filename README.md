@@ -14,7 +14,7 @@ Windows 免安裝影片下載工具，支援 YouTube、Facebook 與 Bilibili 的
 
 適用 Windows 10 22H2／Windows 11 x64；目前實測環境為 Windows x64。免安裝包已包含 Node.js、yt-dlp、FFmpeg，不必另外安裝 Python 或執行環境。程式尚未簽章，Windows 可能顯示未知發行者。
 
-升級前請先關閉舊版，將新版解壓到另一個資料夾再開啟。
+v0.4.0 起，工具會在開啟時自動檢查正式版本，有新版時按「一鍵更新」即可下載、校驗、套用並自動重開，保留設定與已儲存檔案。請先在瀏覽器下載清單確認成品已儲存，更新重開會清除此次瀏覽器暫存。v0.3.0 或更舊版本需先手動下載、解壓新版一次。
 
 ## 功能
 
@@ -24,6 +24,7 @@ Windows 免安裝影片下載工具，支援 YouTube、Facebook 與 Bilibili 的
 - 保留來源編碼：合併／封裝，減少轉檔；部分播放器可能無法播放 AV1／VP9。
 - 預設交給瀏覽器儲存，也能改成直接存到指定資料夾。
 - 本機處理進度、取消工作、最近處理紀錄。
+- 自動檢查正式版本、手動檢查及一鍵更新；新版無法啟動時自動嘗試還原。
 
 瀏覽器顯示的操作畫面連到自己的 `127.0.0.1`；必須先開啟本機工具。GitHub 提供原始碼與下載包，影片不會經過本專案的雲端下載伺服器。
 
@@ -70,7 +71,7 @@ node --test portable-downloader/tests/quality.test.cjs portable-downloader/tests
 
 ClipPocket 自有程式採 [MIT 授權](LICENSE)。隨附第三方元件保留各自授權，詳見 [元件說明](portable-downloader/THIRD_PARTY.md)、[對應來源與建置資料](THIRD_PARTY_SOURCES.md)及 `portable-downloader/licenses`。
 
-本軟體使用 FFmpeg（GPLv3）。同一 Release 提供固定版本的 FFmpeg 原始碼、建置配方及對應的相依原始碼快取；一般使用者不需下載來源附件。
+本軟體使用 FFmpeg（GPLv3）。[v0.3.0 的固定來源附件](https://github.com/koviankevin/ClipPocket/releases/tag/v0.3.0)提供目前隨附 FFmpeg 的完整原始碼、建置配方及對應的相依原始碼快取，新版沿用相同執行元件時繼續使用這組來源；一般使用者不需下載來源附件。
 
 ## 下載頁的版本更新
 
@@ -79,3 +80,11 @@ ClipPocket 自有程式採 [MIT 授權](LICENSE)。隨附第三方元件保留�
 發佈新版時，使用正式 Release（非草稿、非 prerelease），並附上打包腳本產生的 `ClipPocket-版本號-Windows-x64-portable.zip`；版本號須對應 Release tag（例如 tag `v0.4.0` 搭配 `ClipPocket-0.4.0-Windows-x64-portable.zip`），並依 GitHub 的 Latest 設定指定最新正式版。也支援固定附件名稱 `ClipPocket-Windows-x64-portable.zip`。校驗碼附件使用相同檔名再加 `.sha256`。
 
 網站不放 GitHub 權杖，也不需要訪客登入。若 API 暫時受限、網路無法取得版本，或瀏覽器停用 JavaScript，下載入口會保留為 GitHub 最新正式版本頁；不會把舊包標成最新版。最新 Release 尚無 Windows 包時，會明確顯示提示。
+
+## 工具內的自動更新
+
+只在工具開啟時檢查（啟動時與每六小時），不建立背景服務、不需要 GitHub 登入或固定月費。更新僅接受本專案正式 Release 的 Windows x64 ZIP，使用 GitHub asset SHA-256 校驗完整下載，再核對所有包內檔案；這項校驗不等同 Windows 程式簽章。網路失敗不影響既有下載功能。
+
+下載／轉檔或瀏覽器傳送中會阻擋更新。套用前先驗證整包，關閉本機程序後只替換清單列出的程式檔案；設定、已儲存影片及使用者自建檔案保留。替換或新版啟動失敗時嘗試還原原檔並重開，紀錄位於工具的 data/update-result.json。更新中請勿關機或移動工具；若還原也受磁碟或權限問題阻擋，會保留備份並顯示位置。
+
+開發者：更新測試使用隔離的本機假版本，涵蓋成功更新、啟動失敗還原、校驗不符及保護設定資料夾，執行 node portable-downloader/tests/update-native.cjs。打包時 runtime-manifest.json 必須列出全部程式檔案、版本與 SHA-256；新版本需保持更新協定相容。

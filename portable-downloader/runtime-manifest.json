@@ -1,9 +1,99 @@
 {
   "application": "ClipPocket",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "platform": "windows-x64",
-  "generatedAt": "2026-10-23T10:35:48.4819382Z",
+  "generatedAt": "2026-10-23T13:46:05.1682898Z",
   "files": [
+    {
+      "path": "4K片段驗證.json",
+      "bytes": 845,
+      "sha256": "1b9f336983392ca7b33a3c52ce3d3d103ba7f9f18da34f530f2cc6029776383f"
+    },
+    {
+      "path": "更新驗證.json",
+      "bytes": 1081,
+      "sha256": "1d653720f0264ce32f0623c082113814b20751a027e7bf0e840238873a452c86"
+    },
+    {
+      "path": "使用說明.txt",
+      "bytes": 5234,
+      "sha256": "9575e42a21c2faa860ff5b617cd9c5dec1863cea0970ad09107fedfa51fed683"
+    },
+    {
+      "path": "資料夾視窗驗證.json",
+      "bytes": 203,
+      "sha256": "1cf5a7f01be88051778e3b7ef6f31c427d1032bf1d34e01ab28a54b621918a35"
+    },
+    {
+      "path": "瀏覽器儲存驗證.json",
+      "bytes": 4733,
+      "sha256": "3a97468a3dcbb2ae4285c5bc6742200cad40bdca57188e905a8caef18fdb0440"
+    },
+    {
+      "path": "驗證結果.json",
+      "bytes": 7217,
+      "sha256": "834ff834297a4e9ab4e96c392e717a1c2782ab3ed70175114ac1f429acb961cc"
+    },
+    {
+      "path": "驗證摘要.md",
+      "bytes": 6575,
+      "sha256": "b00eaca4bbbdb77a66a1d2ed0df48bd9da878b1b64875051c2fcfe9c68794c9e"
+    },
+    {
+      "path": "app.cjs",
+      "bytes": 21378,
+      "sha256": "8bbb23b1bf50671367c0951936c483baa14c418656d5d3b13a2cb66dfd51f170"
+    },
+    {
+      "path": "browser-downloads.cjs",
+      "bytes": 4619,
+      "sha256": "4fcce3033ed544b4ed5fbe22b1abcec8b15ccc04f0fac69f4d27d9477aee3409"
+    },
+    {
+      "path": "ClipPocket.exe",
+      "bytes": 5120,
+      "sha256": "27e32d549b1040e0a7a11bb9f54b05cf31b88c493dc64d725f7ee1719cc2e08a"
+    },
+    {
+      "path": "Launcher.cs",
+      "bytes": 1482,
+      "sha256": "8eecd0b56e0979d0dc48b2a5a72e055232c009c2eed678974091b8d38cbdae1f"
+    },
+    {
+      "path": "quality.cjs",
+      "bytes": 3559,
+      "sha256": "93cff7f44d480618ed20ceb64524f141319ff3da5007e29a0a2cb70f0bf4f609"
+    },
+    {
+      "path": "SOURCE_CODE.md",
+      "bytes": 4235,
+      "sha256": "bcf489e778e4578fc957c0357b12d20720f13f04eab3f29e0b5da6b3166e20b4"
+    },
+    {
+      "path": "THIRD_PARTY.md",
+      "bytes": 2311,
+      "sha256": "17fa45688646ea8cf5a06be1aeee90e2e6078cbf83de1bd2f68cc6781088763e"
+    },
+    {
+      "path": "Updater.cs",
+      "bytes": 14612,
+      "sha256": "183d8a9260f2d99c8394598e8a2dff8478c7ad7bc8e4894febbae8a6ac64e601"
+    },
+    {
+      "path": "Updater.exe",
+      "bytes": 22016,
+      "sha256": "33f8ab097a97d0cb875929448ab195b4a33ef2534e04feec47d84230e6bdce6e"
+    },
+    {
+      "path": "updates.cjs",
+      "bytes": 6556,
+      "sha256": "a5814e635248bd55d3c112d9b317e59657cbbf9628c2b0fa61bc17eda13b71dc"
+    },
+    {
+      "path": "version.json",
+      "bytes": 66,
+      "sha256": "0e5f93ff45aceaa34f866608d04303085c745d535f50152bb29b31cad45fd9b6"
+    },
     {
       "path": "bin/node.exe",
       "bytes": 92825416,
@@ -60,49 +150,54 @@
       "sha256": "dadabae858b51f93190b66415d3eb91d06679ec6e6e55e4fb70d1b4ee24bae18"
     },
     {
-      "path": "app.cjs",
-      "bytes": 20245,
-      "sha256": "ca8248465c4d3526011c73ff88bc29e52336a2c5166c26c4535fd8a3fb042fc5"
-    },
-    {
-      "path": "quality.cjs",
-      "bytes": 3559,
-      "sha256": "93cff7f44d480618ed20ceb64524f141319ff3da5007e29a0a2cb70f0bf4f609"
-    },
-    {
-      "path": "browser-downloads.cjs",
-      "bytes": 4619,
-      "sha256": "4fcce3033ed544b4ed5fbe22b1abcec8b15ccc04f0fac69f4d27d9477aee3409"
-    },
-    {
-      "path": "version.json",
-      "bytes": 66,
-      "sha256": "39ba2b2beef27aa65d51cf32beebd96e28e93ec4f877d6fa6a0a8c5f12d0f5d4"
-    },
-    {
-      "path": "ClipPocket.exe",
-      "bytes": 4608,
-      "sha256": "d7fc1a35e65874b74469d10dbf09f242691cc90e7f41f8e994b46922eb191e9d"
-    },
-    {
-      "path": "ui/index.html",
-      "bytes": 5051,
-      "sha256": "fdbb6ed26e2dfd41670c71e9a79cef3af635a2510e7b0da6bb6103078325383c"
-    },
-    {
-      "path": "ui/ui.js",
-      "bytes": 9266,
-      "sha256": "ae999ef95cedd381655e99ab5439b1f2b1f70fa02036d42097f201b874ab2fba"
-    },
-    {
-      "path": "ui/style.css",
-      "bytes": 8675,
-      "sha256": "651724f45d3fcc1fa82f4a54adc7f3a142227c93f8450d11740ff3e266aa2374"
-    },
-    {
       "path": "compat/clippocket/yt_dlp_plugins/extractor/bilibili_compat.py",
       "bytes": 2160,
       "sha256": "fbb8a78143d70e206700ef77a0d954dbdddba18b6f6fdc628696934aa259610f"
+    },
+    {
+      "path": "licenses/ClipPocket-MIT.txt",
+      "bytes": 1080,
+      "sha256": "4e4ec3ee1dc77f86da7d59dc943e07f4b3365bdec997703e999188d2fd4599b0"
+    },
+    {
+      "path": "licenses/ffmpeg-build-configuration.txt",
+      "bytes": 4963,
+      "sha256": "ededee07402e610657cd889c19f0bbe55dfd2d46a8d10ada03ba76143889381d"
+    },
+    {
+      "path": "licenses/ffmpeg-GPLv3.txt",
+      "bytes": 35147,
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "path": "licenses/node-LICENSE.txt",
+      "bytes": 157606,
+      "sha256": "148eacf7863ef4329224a29398623077200a27194aa075569faf4a0a85566ca5"
+    },
+    {
+      "path": "licenses/yt-dlp-LICENSE.txt",
+      "bytes": 1211,
+      "sha256": "7e12e5df4bae12cb21581ba157ced20e1986a0508dd10d0e8a4ab9a4cf94e85c"
+    },
+    {
+      "path": "licenses/yt-dlp-THIRD_PARTY_LICENSES.txt",
+      "bytes": 243550,
+      "sha256": "472aefe951c7db35e1657c1d13fd337140511ed6f2b329205105ad441c5a02b7"
+    },
+    {
+      "path": "ui/index.html",
+      "bytes": 5699,
+      "sha256": "0cc598e2bf09d9810a6156f2cbc99f34013d0e85fa6f95d7649b9d24461c8ec8"
+    },
+    {
+      "path": "ui/style.css",
+      "bytes": 9296,
+      "sha256": "3aa556e06cdfbbae490970bbd72b80a2fff7b08e1e97160ae5db6de1840f3dbb"
+    },
+    {
+      "path": "ui/ui.js",
+      "bytes": 10727,
+      "sha256": "96140de7af6f4d70d18c9dc7e1aba44a71c609594898112dd46980df7db9c594"
     }
   ]
 }

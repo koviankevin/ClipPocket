@@ -11,19 +11,13 @@ $fourK = Get-Content -Raw -LiteralPath (Join-Path $appRoot 'evidence\4k-report.j
 if ($fourK.status -ne 'pass') { throw 'The real 4K excerpt check must pass.' }
 $browserReport = Get-Content -Raw -LiteralPath (Join-Path $appRoot 'evidence\browser-report.json') | ConvertFrom-Json
 if ($browserReport.status -ne 'pass' -or $browserReport.version -ne $version) { throw 'Current-version browser delivery checks must pass.' }
-$manifestPaths = @((Get-ChildItem -LiteralPath (Join-Path $appRoot 'bin') -File -Recurse | ForEach-Object { [System.IO.Path]::GetRelativePath($appRoot, $_.FullName).Replace('\','/') }))
-$manifestPaths += @('app.cjs','quality.cjs','browser-downloads.cjs','version.json','ClipPocket.exe','ui/index.html','ui/ui.js','ui/style.css','compat/clippocket/yt_dlp_plugins/extractor/bilibili_compat.py')
-$manifestFiles = @($manifestPaths | ForEach-Object {
-    $filePath = Join-Path $appRoot $_
-    [pscustomobject]@{path=$_;bytes=(Get-Item -LiteralPath $filePath).Length;sha256=(Get-FileHash -LiteralPath $filePath -Algorithm SHA256).Hash.ToLowerInvariant()}
-})
-[pscustomobject]@{application='ClipPocket';version=$version;platform='windows-x64';generatedAt=(Get-Date).ToUniversalTime().ToString('o');files=$manifestFiles} |
-    ConvertTo-Json -Depth 5 | Set-Content -Encoding UTF8 -LiteralPath (Join-Path $appRoot 'runtime-manifest.json')
+$updateReport = Get-Content -Raw -LiteralPath (Join-Path $appRoot 'evidence\update-report.json') | ConvertFrom-Json
+if ($updateReport.status -ne 'pass' -or $updateReport.version -ne $version) { throw 'Current-version update and rollback checks must pass.' }
 $buildRoot = Join-Path $workspaceRoot ('portable-build-cache\package-' + [guid]::NewGuid().ToString('N'))
 $stageRoot = Join-Path $buildRoot 'ClipPocket'
 $releaseRoot = Join-Path $workspaceRoot 'releases'
 New-Item -ItemType Directory -Path $stageRoot,$releaseRoot -Force | Out-Null
-$include = @('app.cjs','quality.cjs','browser-downloads.cjs','version.json','ClipPocket.exe','Launcher.cs','使用說明.txt','THIRD_PARTY.md','SOURCE_CODE.md','驗證摘要.md','runtime-manifest.json','bin','licenses','ui')
+$include = @('app.cjs','quality.cjs','browser-downloads.cjs','updates.cjs','version.json','ClipPocket.exe','Updater.exe','Launcher.cs','Updater.cs','使用說明.txt','THIRD_PARTY.md','SOURCE_CODE.md','驗證摘要.md','bin','licenses','ui')
 foreach ($item in $include) {
     Copy-Item -LiteralPath (Join-Path $appRoot $item) -Destination $stageRoot -Recurse
 }
@@ -31,9 +25,17 @@ Copy-Item -LiteralPath $reportPath -Destination (Join-Path $stageRoot '驗證結
 Copy-Item -LiteralPath (Join-Path $appRoot 'evidence\4k-report.json') -Destination (Join-Path $stageRoot '4K片段驗證.json')
 Copy-Item -LiteralPath (Join-Path $appRoot 'evidence\folder-report.json') -Destination (Join-Path $stageRoot '資料夾視窗驗證.json')
 Copy-Item -LiteralPath (Join-Path $appRoot 'evidence\browser-report.json') -Destination (Join-Path $stageRoot '瀏覽器儲存驗證.json')
+Copy-Item -LiteralPath (Join-Path $appRoot 'evidence\update-report.json') -Destination (Join-Path $stageRoot '更新驗證.json')
 $compatRelative='compat\clippocket\yt_dlp_plugins\extractor\bilibili_compat.py'
 New-Item -ItemType Directory -Path (Split-Path (Join-Path $stageRoot $compatRelative)) -Force | Out-Null
 Copy-Item -LiteralPath (Join-Path $appRoot $compatRelative) -Destination (Join-Path $stageRoot $compatRelative)
+# The updater owns exactly these packaged files. User data is never in this list.
+$manifestFiles = @(Get-ChildItem -LiteralPath $stageRoot -File -Recurse | ForEach-Object {
+    [pscustomobject]@{path=[System.IO.Path]::GetRelativePath($stageRoot, $_.FullName).Replace('\','/');bytes=$_.Length;sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()}
+})
+[pscustomobject]@{application='ClipPocket';version=$version;platform='windows-x64';generatedAt=(Get-Date).ToUniversalTime().ToString('o');files=$manifestFiles} |
+    ConvertTo-Json -Depth 5 | Set-Content -Encoding UTF8 -LiteralPath (Join-Path $stageRoot 'runtime-manifest.json')
+Copy-Item -LiteralPath (Join-Path $stageRoot 'runtime-manifest.json') -Destination (Join-Path $appRoot 'runtime-manifest.json') -Force
 $archive = Join-Path $releaseRoot ('ClipPocket-' + $version + '-Windows-x64-portable.zip')
 Compress-Archive -LiteralPath $stageRoot -DestinationPath $archive -CompressionLevel Optimal -Force
 $digest = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()

@@ -9,6 +9,7 @@ portable-downloader/evidence/*.log
 portable-downloader/evidence/*.mp4
 portable-downloader/evidence/*.mp3
 portable-downloader/ClipPocket.exe
+portable-downloader/Updater.exe
 releases/
 __pycache__/
 browser-download-probe/
