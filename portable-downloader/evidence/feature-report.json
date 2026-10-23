@@ -1,0 +1,303 @@
+{
+  "version": "0.2.0",
+  "testedAt": "2026-10-23T09:20:24.075Z",
+  "environment": "Windows x64, fresh Edge, bundled runtimes, no account cookies",
+  "checks": [
+    {
+      "name": "Source resolutions/FPS through 4K60, selection persists, changing URL clears stale quality, MP3 disables video controls, narrow layout",
+      "status": "pass"
+    },
+    {
+      "name": "Open-folder API creates a visible Explorer window",
+      "status": "pass"
+    },
+    {
+      "name": "Invalid quality rejected; cancellation still works",
+      "status": "pass"
+    },
+    {
+      "name": "No browser JavaScript errors",
+      "status": "pass"
+    }
+  ],
+  "downloads": [
+    {
+      "platform": "Bilibili",
+      "format": "mp4",
+      "quality": "360p",
+      "mode": "compatible",
+      "fileName": "【练习室】201603声乐练习《No Air》with VigoVan [BV1nx411u79K].mp4",
+      "bytes": 9135704,
+      "sha256": "821aded3f3bc66813c909773e43f0d5aea7d28e3fe19f6eaa3f69e5e86e5ec5c",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 640,
+            "height": 360,
+            "avg_frame_rate": "1193500/40087",
+            "bit_rate": "804875"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "avg_frame_rate": "0/0",
+            "bit_rate": "96056"
+          }
+        ],
+        "format": {
+          "duration": "80.383667",
+          "size": "9135704"
+        }
+      },
+      "fullDecode": "pass"
+    },
+    {
+      "platform": "Bilibili",
+      "format": "mp3",
+      "quality": null,
+      "mode": "compatible",
+      "fileName": "【练习室】201603声乐练习《No Air》with VigoVan [BV1nx411u79K].mp3",
+      "bytes": 1930970,
+      "sha256": "be710b147f747547e3dcd6dc2ab21285e3419238330abed720513b329575b200",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "mp3",
+            "codec_type": "audio",
+            "avg_frame_rate": "0/0",
+            "bit_rate": "192000"
+          }
+        ],
+        "format": {
+          "duration": "80.383667",
+          "size": "1930970"
+        }
+      },
+      "fullDecode": "pass"
+    },
+    {
+      "platform": "YouTube",
+      "format": "mp4",
+      "quality": "240p · 15fps",
+      "mode": "compatible",
+      "fileName": "Me at the zoo [jNQXAC9IVRw] (2).mp4",
+      "bytes": 629172,
+      "sha256": "280cb385b84657c8cd83c30184a3b3f2c9b0c5e3bc2b46db5a799a50026c7070",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 320,
+            "height": 240,
+            "avg_frame_rate": "15/1",
+            "bit_rate": "134308"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "avg_frame_rate": "0/0",
+            "bit_rate": "128094"
+          }
+        ],
+        "format": {
+          "duration": "18.947483",
+          "size": "629172"
+        }
+      },
+      "fullDecode": "pass"
+    },
+    {
+      "platform": "Facebook",
+      "format": "mp4",
+      "quality": "360p",
+      "mode": "compatible",
+      "fileName": "Holocaust survivor becomes US citizen [10155529876156509] (2).mp4",
+      "bytes": 3221071,
+      "sha256": "680b6eb9d2aa992c6fde756ac4058ad918c15886374d2bbb8b9e3644bf2cc86b",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 360,
+            "height": 360,
+            "avg_frame_rate": "2997/100",
+            "bit_rate": "378644"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "avg_frame_rate": "0/0",
+            "bit_rate": "195235"
+          }
+        ],
+        "format": {
+          "duration": "44.330667",
+          "size": "3221071"
+        }
+      },
+      "fullDecode": "pass"
+    }
+  ],
+  "qualities": {
+    "bilibili": [
+      {
+        "id": "q-360-0",
+        "label": "360p",
+        "resolution": 360,
+        "fps": 0,
+        "width": 0,
+        "height": 360
+      }
+    ],
+    "youtube": [
+      {
+        "id": "q-240-15",
+        "label": "240p · 15fps",
+        "resolution": 240,
+        "fps": 15,
+        "width": 320,
+        "height": 240
+      },
+      {
+        "id": "q-144-15",
+        "label": "144p · 15fps",
+        "resolution": 144,
+        "fps": 15,
+        "width": 192,
+        "height": 144
+      }
+    ],
+    "facebook": [
+      {
+        "id": "q-1080-0",
+        "label": "1080p",
+        "resolution": 1080,
+        "fps": 0,
+        "width": 1080,
+        "height": 1080
+      },
+      {
+        "id": "q-720-0",
+        "label": "720p",
+        "resolution": 720,
+        "fps": 0,
+        "width": 720,
+        "height": 720
+      },
+      {
+        "id": "q-540-0",
+        "label": "540p",
+        "resolution": 540,
+        "fps": 0,
+        "width": 540,
+        "height": 540
+      },
+      {
+        "id": "q-360-0",
+        "label": "360p",
+        "resolution": 360,
+        "fps": 0,
+        "width": 360,
+        "height": 360
+      }
+    ],
+    "youtube4k": [
+      {
+        "id": "q-2160-60",
+        "label": "2160p（4K） · 60fps",
+        "resolution": 2160,
+        "fps": 60,
+        "width": 3840,
+        "height": 2160
+      },
+      {
+        "id": "q-1440-60",
+        "label": "1440p · 60fps",
+        "resolution": 1440,
+        "fps": 60,
+        "width": 2560,
+        "height": 1440
+      },
+      {
+        "id": "q-1080-60",
+        "label": "1080p · 60fps",
+        "resolution": 1080,
+        "fps": 60,
+        "width": 1920,
+        "height": 1080
+      },
+      {
+        "id": "q-720-60",
+        "label": "720p · 60fps",
+        "resolution": 720,
+        "fps": 60,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "id": "q-720-30",
+        "label": "720p · 30fps",
+        "resolution": 720,
+        "fps": 30,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "id": "q-480-30",
+        "label": "480p · 30fps",
+        "resolution": 480,
+        "fps": 30,
+        "width": 854,
+        "height": 480
+      },
+      {
+        "id": "q-360-30",
+        "label": "360p · 30fps",
+        "resolution": 360,
+        "fps": 30,
+        "width": 640,
+        "height": 360
+      },
+      {
+        "id": "q-240-30",
+        "label": "240p · 30fps",
+        "resolution": 240,
+        "fps": 30,
+        "width": 426,
+        "height": 240
+      },
+      {
+        "id": "q-144-30",
+        "label": "144p · 30fps",
+        "resolution": 144,
+        "fps": 30,
+        "width": 256,
+        "height": 144
+      },
+      {
+        "id": "q-144-15",
+        "label": "144p · 15fps",
+        "resolution": 144,
+        "fps": 15,
+        "width": 256,
+        "height": 144
+      }
+    ]
+  },
+  "status": "pass",
+  "uiRetestedAt": "2026-10-23T10:07:10.197Z",
+  "finishedAt": "2026-10-23T10:07:41.470Z",
+  "uiVersion": "0.3.0"
+}

@@ -1,0 +1,142 @@
+{
+  "testedAt": "2026-10-23T07:26:17.111Z",
+  "environment": "Windows x64; fresh Edge profile; bundled Node/yt-dlp/FFmpeg only; no account cookies",
+  "checks": [
+    {
+      "name": "Double-click Windows launcher starts bundled runtime",
+      "status": "pass"
+    },
+    {
+      "name": "Reject missing token, external origin, local/non-platform URLs",
+      "status": "pass"
+    },
+    {
+      "name": "Desktop and narrow layout, no horizontal overflow",
+      "status": "pass"
+    },
+    {
+      "name": "Cancel stops own download and rejects overlapping task",
+      "status": "pass"
+    },
+    {
+      "name": "No browser JavaScript errors",
+      "status": "pass"
+    }
+  ],
+  "downloads": [
+    {
+      "platform": "YouTube",
+      "format": "mp4",
+      "title": "Me at the zoo",
+      "fileName": "Me at the zoo [jNQXAC9IVRw].mp4",
+      "bytes": 629172,
+      "sha256": "280cb385b84657c8cd83c30184a3b3f2c9b0c5e3bc2b46db5a799a50026c7070",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 320,
+            "height": 240,
+            "bit_rate": "134308"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "bit_rate": "128094"
+          }
+        ],
+        "format": {
+          "duration": "18.947483",
+          "size": "629172"
+        }
+      },
+      "fullDecode": "pass"
+    },
+    {
+      "platform": "YouTube",
+      "format": "mp3",
+      "title": "Me at the zoo",
+      "fileName": "Me at the zoo [jNQXAC9IVRw].mp3",
+      "bytes": 457388,
+      "sha256": "e02e48ff2d82cb0f38d9ad3988a0998b2bf37231570d184642ea9281266c9a92",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "mp3",
+            "codec_type": "audio",
+            "bit_rate": "192000"
+          }
+        ],
+        "format": {
+          "duration": "19.005542",
+          "size": "457388"
+        }
+      },
+      "fullDecode": "pass"
+    },
+    {
+      "platform": "Facebook",
+      "format": "mp4",
+      "title": "Holocaust survivor becomes US citizen",
+      "fileName": "Holocaust survivor becomes US citizen [10155529876156509].mp4",
+      "bytes": 11810035,
+      "sha256": "21f0c64a011f300b6bfb29e33010b3afd0016ef70238a422d41fbae1d99eede7",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 1080,
+            "height": 1080,
+            "bit_rate": "1935145"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "bit_rate": "195235"
+          }
+        ],
+        "format": {
+          "duration": "44.330667",
+          "size": "11810035"
+        }
+      },
+      "fullDecode": "pass"
+    },
+    {
+      "platform": "Facebook",
+      "format": "mp3",
+      "title": "Holocaust survivor becomes US citizen",
+      "fileName": "Holocaust survivor becomes US citizen [10155529876156509].mp3",
+      "bytes": 1065772,
+      "sha256": "62efd15619a81f1805378b45ccb40870bcd8d74023211094ee277a2c8ba283e6",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "mp3",
+            "codec_type": "audio",
+            "bit_rate": "192000"
+          }
+        ],
+        "format": {
+          "duration": "44.330667",
+          "size": "1065772"
+        }
+      },
+      "fullDecode": "pass"
+    }
+  ],
+  "status": "pass",
+  "uiRetestedAt": "2026-10-23T07:32:35.828Z",
+  "browser": "155.0.4283.62",
+  "finishedAt": "2026-10-23T07:32:52.435Z"
+}

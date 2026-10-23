@@ -1,0 +1,176 @@
+{
+  "version": "0.3.0",
+  "testedAt": "2026-10-23T10:04:02.397Z",
+  "checks": [
+    {
+      "name": "Default browser delivery, folder controls hidden",
+      "status": "pass"
+    },
+    {
+      "name": "Browser download event and filename; retry bytes; reload does not replay; range resume; invalid ticket/auth/origin rejected",
+      "status": "pass"
+    },
+    {
+      "name": "Direct folder MP3 preserved, no browser download; responsive layout",
+      "status": "pass"
+    },
+    {
+      "name": "Invalid delivery rejected; browser cache excluded from persistent history; no JS errors",
+      "status": "pass"
+    },
+    {
+      "name": "Shutdown clears browser cache and keeps direct saved file",
+      "status": "pass"
+    }
+  ],
+  "downloads": [
+    {
+      "platform": "YouTube",
+      "format": "mp4",
+      "delivery": "browser",
+      "name": "Me at the zoo [jNQXAC9IVRw].mp4",
+      "bytes": 629172,
+      "sha256": "280cb385b84657c8cd83c30184a3b3f2c9b0c5e3bc2b46db5a799a50026c7070",
+      "browserBytesMatch": "pass",
+      "fullDecode": "pass",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 320,
+            "height": 240,
+            "avg_frame_rate": "15/1"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "avg_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "18.947483",
+          "size": "629172"
+        }
+      }
+    },
+    {
+      "platform": "Facebook",
+      "format": "mp4",
+      "delivery": "browser",
+      "name": "Holocaust survivor becomes US citizen [10155529876156509].mp4",
+      "bytes": 3221071,
+      "sha256": "680b6eb9d2aa992c6fde756ac4058ad918c15886374d2bbb8b9e3644bf2cc86b",
+      "browserBytesMatch": "pass",
+      "fullDecode": "pass",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 360,
+            "height": 360,
+            "avg_frame_rate": "2997/100"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "avg_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "44.330667",
+          "size": "3221071"
+        }
+      }
+    },
+    {
+      "platform": "Bilibili",
+      "format": "mp4",
+      "delivery": "browser",
+      "name": "【练习室】201603声乐练习《No Air》with VigoVan [BV1nx411u79K].mp4",
+      "bytes": 9135704,
+      "sha256": "821aded3f3bc66813c909773e43f0d5aea7d28e3fe19f6eaa3f69e5e86e5ec5c",
+      "browserBytesMatch": "pass",
+      "fullDecode": "pass",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 640,
+            "height": 360,
+            "avg_frame_rate": "1193500/40087"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "avg_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "80.383667",
+          "size": "9135704"
+        }
+      }
+    },
+    {
+      "platform": "Bilibili",
+      "format": "mp3",
+      "delivery": "browser",
+      "name": "【练习室】201603声乐练习《No Air》with VigoVan [BV1nx411u79K].mp3",
+      "bytes": 1930970,
+      "sha256": "be710b147f747547e3dcd6dc2ab21285e3419238330abed720513b329575b200",
+      "browserBytesMatch": "pass",
+      "fullDecode": "pass",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "mp3",
+            "codec_type": "audio",
+            "avg_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "80.383667",
+          "size": "1930970"
+        }
+      }
+    },
+    {
+      "platform": "YouTube",
+      "format": "mp3",
+      "delivery": "folder",
+      "name": "Me at the zoo [jNQXAC9IVRw] (2).mp3",
+      "bytes": 457388,
+      "sha256": "e02e48ff2d82cb0f38d9ad3988a0998b2bf37231570d184642ea9281266c9a92",
+      "browserBytesMatch": "pass",
+      "fullDecode": "pass",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "mp3",
+            "codec_type": "audio",
+            "avg_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "19.005542",
+          "size": "457388"
+        }
+      }
+    }
+  ],
+  "status": "pass",
+  "finishedAt": "2026-10-23T10:06:34.265Z"
+}

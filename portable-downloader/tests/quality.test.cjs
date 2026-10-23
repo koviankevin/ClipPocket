@@ -1,0 +1,14 @@
+const assert=require('node:assert/strict');
+const {qualityOptions,selectQuality,outputRequest}=require('../quality.cjs');
+const video=(id,width,height,fps,codec='avc1')=>({format_id:id,url:'https://example.invalid/video',width,height,fps,vcodec:codec,acodec:'none',protocol:'https',ext:'mp4'});
+const info={formats:[video('1080',1920,1080,60),video('4k30',3840,2160,30,'vp9'),video('4k60',3840,2160,59.94,'av01'),video('8k60',7680,4320,60,'av01'),{...video('drm',16000,9000,60),has_drm:true},{...video('story',480,270,1),ext:'mhtml',vcodec:'none'}]};
+assert.deepEqual(qualityOptions(info).map(q=>q.id),['q-4320-60','q-2160-60','q-2160-30','q-1080-60']);
+assert(selectQuality(info,outputRequest({format:'mp4',quality:'best'})).selector.startsWith('8k60+'));
+assert(selectQuality(info,outputRequest({format:'mp4',quality:'q-2160-60'})).selector.startsWith('4k60+'));
+assert(!selectQuality(info,outputRequest({format:'mp4',quality:'q-2160-60'})).selector.includes('1080'));
+assert.throws(()=>selectQuality(info,outputRequest({format:'mp4',quality:'q-720-30'})),/重新讀取/);
+const legacy={formats:[{format_id:'16',url:'https://example.invalid/video',height:360,ext:'mp4'}]};
+assert.equal(selectQuality(legacy,outputRequest({format:'mp4'})).selector,'16');
+assert.equal(qualityOptions({formats:[video('portrait',1080,1920,30)]})[0].resolution,1080);
+assert.throws(()=>outputRequest({format:'mp4',quality:'q-2160-60;exec'}),/畫質/);
+console.log('Quality selection: source-only resolutions/FPS, 4K/8K without H.264 downgrade, legacy and portrait passed.');

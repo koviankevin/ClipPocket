@@ -1,0 +1,108 @@
+{
+  "application": "ClipPocket",
+  "version": "0.3.0",
+  "platform": "windows-x64",
+  "generatedAt": "2026-10-23T10:35:48.4819382Z",
+  "files": [
+    {
+      "path": "bin/node.exe",
+      "bytes": 92825416,
+      "sha256": "3602f2bb1a10f2cbab4c36886218a33c1ab3db87290e73b033c46c77147d0237"
+    },
+    {
+      "path": "bin/yt-dlp.exe",
+      "bytes": 17880111,
+      "sha256": "33121d192d706e62f684a06f80918e3f3a8ba52ac3a65213b6951c39c7d9f555"
+    },
+    {
+      "path": "bin/ffmpeg/avcodec-63.dll",
+      "bytes": 119067136,
+      "sha256": "831473f2fd68855de58ebf724d73d915224e3a9f530a69ec85b1a586a0af2f81"
+    },
+    {
+      "path": "bin/ffmpeg/avdevice-63.dll",
+      "bytes": 4948480,
+      "sha256": "00c1addcc5db1375878f2a6c8e9afc4209095be70c23af9f6d0b16b7fcf28017"
+    },
+    {
+      "path": "bin/ffmpeg/avfilter-12.dll",
+      "bytes": 37342720,
+      "sha256": "2c5edc647749a9ab4fed9bfe896f0c4d509c10b22ef173dbe5311e19e9f8ef4d"
+    },
+    {
+      "path": "bin/ffmpeg/avformat-63.dll",
+      "bytes": 23016448,
+      "sha256": "f5de533ea15dfab1417d2557865cc800ea2b53aaf7b1028904b81e79ddef6e51"
+    },
+    {
+      "path": "bin/ffmpeg/avutil-61.dll",
+      "bytes": 3016704,
+      "sha256": "4e0fc3e0278b1ad5ce2747f3e79d5c81eda3497f61713df73eef05f64f0a3c55"
+    },
+    {
+      "path": "bin/ffmpeg/ffmpeg.exe",
+      "bytes": 540160,
+      "sha256": "df6b2df3cd47fdfe221bf9be0c5c7363cdbd1b916f35894392d44203a10847b7"
+    },
+    {
+      "path": "bin/ffmpeg/ffprobe.exe",
+      "bytes": 229888,
+      "sha256": "26ebc05bb447a7a86a692e54190d57d72fbe07fe4c659151c8cb158c7f2fe429"
+    },
+    {
+      "path": "bin/ffmpeg/swresample-7.dll",
+      "bytes": 734720,
+      "sha256": "d874f1568330fe122d4efdda2185619787c3db6200b576c1cf668058df58fe35"
+    },
+    {
+      "path": "bin/ffmpeg/swscale-10.dll",
+      "bytes": 2332160,
+      "sha256": "dadabae858b51f93190b66415d3eb91d06679ec6e6e55e4fb70d1b4ee24bae18"
+    },
+    {
+      "path": "app.cjs",
+      "bytes": 20245,
+      "sha256": "ca8248465c4d3526011c73ff88bc29e52336a2c5166c26c4535fd8a3fb042fc5"
+    },
+    {
+      "path": "quality.cjs",
+      "bytes": 3559,
+      "sha256": "93cff7f44d480618ed20ceb64524f141319ff3da5007e29a0a2cb70f0bf4f609"
+    },
+    {
+      "path": "browser-downloads.cjs",
+      "bytes": 4619,
+      "sha256": "4fcce3033ed544b4ed5fbe22b1abcec8b15ccc04f0fac69f4d27d9477aee3409"
+    },
+    {
+      "path": "version.json",
+      "bytes": 66,
+      "sha256": "39ba2b2beef27aa65d51cf32beebd96e28e93ec4f877d6fa6a0a8c5f12d0f5d4"
+    },
+    {
+      "path": "ClipPocket.exe",
+      "bytes": 4608,
+      "sha256": "d7fc1a35e65874b74469d10dbf09f242691cc90e7f41f8e994b46922eb191e9d"
+    },
+    {
+      "path": "ui/index.html",
+      "bytes": 5051,
+      "sha256": "fdbb6ed26e2dfd41670c71e9a79cef3af635a2510e7b0da6bb6103078325383c"
+    },
+    {
+      "path": "ui/ui.js",
+      "bytes": 9266,
+      "sha256": "ae999ef95cedd381655e99ab5439b1f2b1f70fa02036d42097f201b874ab2fba"
+    },
+    {
+      "path": "ui/style.css",
+      "bytes": 8675,
+      "sha256": "651724f45d3fcc1fa82f4a54adc7f3a142227c93f8450d11740ff3e266aa2374"
+    },
+    {
+      "path": "compat/clippocket/yt_dlp_plugins/extractor/bilibili_compat.py",
+      "bytes": 2160,
+      "sha256": "fbb8a78143d70e206700ef77a0d954dbdddba18b6f6fdc628696934aa259610f"
+    }
+  ]
+}

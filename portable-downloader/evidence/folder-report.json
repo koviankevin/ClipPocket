@@ -1,0 +1,11 @@
+{
+  "test": "Open download folder creates a visible Explorer window",
+  "visibleCount": 1,
+  "matches": [
+    {
+      "handle": 19923066,
+      "visible": true
+    }
+  ],
+  "status": "pass"
+}

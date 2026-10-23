@@ -1,0 +1,36 @@
+{
+  "status": "pass",
+  "testedAt": "2026-10-23T09:22:02.929Z",
+  "scope": "Actual source download and full decode of the opening 3-second excerpt; not a full-video 4K download",
+  "quality": {
+    "id": "q-2160-60",
+    "label": "2160p（4K） · 60fps",
+    "resolution": 2160,
+    "fps": 60,
+    "width": 3840,
+    "height": 2160
+  },
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "av1",
+        "codec_type": "video",
+        "width": 3840,
+        "height": 2160,
+        "avg_frame_rate": "60/1"
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "avg_frame_rate": "0/0"
+      }
+    ],
+    "format": {
+      "duration": "3.008000",
+      "size": "543202"
+    }
+  },
+  "sha256": "98b006199952b4dec846bf7f239eb662d0e6005457870ce3de5d0aa27e692730"
+}
