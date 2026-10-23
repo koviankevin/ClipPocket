@@ -1,0 +1,13 @@
+{
+  "status": "pass",
+  "testedAt": "2026-10-23T10:57:02.803Z",
+  "repository": "https://github.com/koviankevin/ClipPocket",
+  "release": "https://github.com/koviankevin/ClipPocket/releases/tag/v0.3.0",
+  "download": "https://github.com/koviankevin/ClipPocket/releases/latest/download/ClipPocket-0.3.0-Windows-x64-portable.zip",
+  "visibility": "public",
+  "anonymousFullZipDownload": "pass",
+  "bytes": 131147634,
+  "sha256": "2c62e9b18ddfe738ba75c059dc0ba819d836f223b389a1fc6eccb9287dfdced8",
+  "releaseAssets": 12,
+  "sourceAssetsAndDigests": "pass"
+}
