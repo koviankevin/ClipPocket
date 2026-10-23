@@ -2,11 +2,11 @@
 
 Windows 免安裝影片下載工具，支援 YouTube、Facebook 與 Bilibili 的公開、免登入單支影片。用瀏覽器操作，在自己的電腦下載、合併影音及轉檔，不需要訂閱或架設伺服器。
 
-**[下載與操作教學](https://koviankevin.github.io/ClipPocket/)** · [直接下載 Windows 64 位元免安裝版](https://github.com/koviankevin/ClipPocket/releases/download/v0.3.0/ClipPocket-0.3.0-Windows-x64-portable.zip) · [版本紀錄](https://github.com/koviankevin/ClipPocket/releases/latest)
+**[下載與操作教學](https://koviankevin.github.io/ClipPocket/)** · [GitHub 最新正式版本](https://github.com/koviankevin/ClipPocket/releases/latest) · [版本紀錄](https://github.com/koviankevin/ClipPocket/releases)
 
 ## 開始使用
 
-1. 到 Release 下載 `ClipPocket-0.3.0-Windows-x64-portable.zip`。一般使用者只需要這個 ZIP，其他來源附件提供給開發者。
+1. 到 Release 下載 `ClipPocket-版本號-Windows-x64-portable.zip`。一般使用者只需要這個 ZIP，其他來源附件提供給開發者。
 2. **完整解壓縮整個資料夾**，雙擊 `ClipPocket.exe`。請保留隨附檔案，單獨複製 EXE 無法執行。
 3. 貼上影片網址，按「讀取資訊」，選 MP4／MP3、畫質及輸出模式。
 4. 預設完成處理後交給瀏覽器下載管理員，儲存位置依你的瀏覽器設定。
@@ -71,3 +71,11 @@ node --test portable-downloader/tests/quality.test.cjs portable-downloader/tests
 ClipPocket 自有程式採 [MIT 授權](LICENSE)。隨附第三方元件保留各自授權，詳見 [元件說明](portable-downloader/THIRD_PARTY.md)、[對應來源與建置資料](THIRD_PARTY_SOURCES.md)及 `portable-downloader/licenses`。
 
 本軟體使用 FFmpeg（GPLv3）。同一 Release 提供固定版本的 FFmpeg 原始碼、建置配方及對應的相依原始碼快取；一般使用者不需下載來源附件。
+
+## 下載頁的版本更新
+
+下載頁每次開啟時，會透過公開 GitHub API 讀取最新正式 Release，自動更新版本、檔案大小、兩個下載按鈕及該檔案的校驗碼連結，不需要重新部署頁面。
+
+發佈新版時，使用正式 Release（非草稿、非 prerelease），並附上打包腳本產生的 `ClipPocket-版本號-Windows-x64-portable.zip`；版本號須對應 Release tag（例如 tag `v0.4.0` 搭配 `ClipPocket-0.4.0-Windows-x64-portable.zip`），並依 GitHub 的 Latest 設定指定最新正式版。也支援固定附件名稱 `ClipPocket-Windows-x64-portable.zip`。校驗碼附件使用相同檔名再加 `.sha256`。
+
+網站不放 GitHub 權杖，也不需要訪客登入。若 API 暫時受限、網路無法取得版本，或瀏覽器停用 JavaScript，下載入口會保留為 GitHub 最新正式版本頁；不會把舊包標成最新版。最新 Release 尚無 Windows 包時，會明確顯示提示。
