@@ -1,10 +1,10 @@
 {
   "status": "pass",
-  "version": "0.4.0",
-  "testedAt": "2026-10-23T13:47:55.962Z",
-  "archiveSha256": "79e496fb67b597b5af7f202a44f18d23bebcea1204599a0cb8c1245a797a8335",
+  "version": "0.4.1",
+  "testedAt": "2026-10-23T15:18:06.215Z",
+  "archiveSha256": "f3cd9369d06c7b709b09f2a18072d73706d9d96beba2290e5e0afa05861c6661",
   "fromVersion": "0.3.9",
-  "toVersion": "0.4.0",
+  "toVersion": "0.4.1",
   "checks": [
     "real portable ZIP fully validated",
     "one-click browser UI installs and restarts",

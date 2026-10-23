@@ -2,7 +2,7 @@
 const token=location.hash.slice(1);
 history.replaceState(null,'',location.pathname);
 const q=id=>document.getElementById(id);
-let current=null,stopped=false,clientError=null,qualityStamp='',noticeTimer,pendingJob=null,handoffBusy=false;
+let current=null,stopped=false,closingUI=false,clientError=null,qualityStamp='',noticeTimer,pendingJob=null,handoffBusy=false;
 const samples={youtube:'https://www.youtube.com/watch?v=jNQXAC9IVRw',facebook:'https://www.facebook.com/cnn/videos/10155529876156509/',bilibili:'https://www.bilibili.com/video/BV1nx411u79K',youtube4k:'https://www.youtube.com/watch?v=aqz-KE-bpKQ'};
 async function api(route,body){
   const response=await fetch('/api/'+route,{method:body===undefined?'GET':'POST',headers:{'X-ClipPocket-Token':token,...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{body:JSON.stringify(body)})});
@@ -19,7 +19,7 @@ function renderDelivery(){
   q('deliveryHint').textContent=browser?'完成處理後自動交給瀏覽器；儲存位置依瀏覽器設定。若未自動開始，可在最近處理按「再次儲存」。':'完成後直接存到下方資料夾，不經瀏覽器下載管理員。';
 }
 async function saveInBrowser(file){
-  const result=await api('browser-download',{id:file.id});
+  const result=await api('browser-download',{id:file.id});if(stopped||closingUI)return;
   const link=document.createElement('a');link.href=result.url;link.download=result.name;
   document.body.append(link);link.click();link.remove();
   notice('已交給瀏覽器下載管理員；請在瀏覽器下載清單確認儲存進度。');
@@ -87,7 +87,17 @@ function renderUpdate(state){
   q('updatePanel').classList.toggle('update-available',Boolean(update.latest));
   if(update.phase==='restarting'){stopped=true;document.querySelectorAll('button,input,select').forEach(el=>el.disabled=true);}
 }
-async function poll(){if(stopped)return;try{const state=await api('state');render(state);await handoff(state);if(clientError){q('status').classList.add('error');q('statusText').textContent=clientError;}}catch{q('statusText').textContent='工具連線已中斷。請重新開啟 ClipPocket。';}setTimeout(poll,700);}
+async function poll(){
+  if(stopped)return;
+  let state;
+  try{state=await api('state');}
+  catch{
+    if(!stopped&&!closingUI){stopped=true;document.querySelector('main').hidden=true;q('closedPanel').hidden=false;q('closedTitle').textContent='ClipPocket 連線已結束';q('closedMessage').textContent='工具已從其他分頁關閉，或本機程式已停止。';q('closedHint').textContent='可以關閉此分頁。需要使用時，請重新開啟 ClipPocket.exe。';window.scrollTo(0,0);}
+    if(!stopped)setTimeout(poll,700);return;
+  }
+  if(!stopped&&!closingUI){render(state);await handoff(state);if(clientError){q('status').classList.add('error');q('statusText').textContent=clientError;}}
+  if(!stopped)setTimeout(poll,700);
+}
 function changedUrl(){clientError=null;renderQuality(current?.video);q('videoInfo').hidden=!inputMatches(current?.video);}
 q('url').oninput=changedUrl;
 q('paste').onclick=async()=>{try{q('url').value=await navigator.clipboard.readText();changedUrl();q('url').focus();}catch{q('url').focus();notice('請在網址欄按 Ctrl＋V 貼上。');}};
@@ -103,7 +113,20 @@ q('installUpdate').onclick=async()=>{q('installUpdate').disabled=true;try{await 
 q('cancel').onclick=()=>api('cancel',{}).catch(localError);
 q('chooseFolder').onclick=async()=>{q('chooseFolder').disabled=true;try{await api('folder',{});}catch(error){localError(error);}finally{q('chooseFolder').disabled=false;}};
 q('openFolder').onclick=async()=>{try{await api('open-folder',{});notice('已開啟下載資料夾。');}catch(error){localError(error);}};
-q('shutdown').onclick=async()=>{try{await api('shutdown',{});}catch(error){localError(error);return;}stopped=true;q('statusText').textContent='工具已關閉，可以關閉此分頁。';q('statusDetail').textContent='瀏覽器暫存已清除；下次雙擊 ClipPocket.exe 即可再次使用。';document.querySelectorAll('button,input,select').forEach(el=>el.disabled=true);};
+q('shutdown').onclick=async()=>{
+  if(closingUI||stopped)return;
+  closingUI=true;q('shutdown').disabled=true;q('shutdown').textContent='正在關閉…';
+  try{await api('shutdown',{});}catch(error){closingUI=false;q('shutdown').disabled=false;q('shutdown').textContent='關閉工具';localError(error);notice(error.message);return;}
+  stopped=true;pendingJob=null;document.querySelectorAll('button,input,select').forEach(el=>el.disabled=true);
+  document.querySelector('main').hidden=true;q('closedPanel').hidden=false;window.scrollTo(0,0);q('closedTitle').setAttribute('tabindex','-1');q('closedTitle').focus();
+  // The request is an acknowledgement. Wait until the local listener is gone
+  // before telling the user that the tool has finished closing.
+  const deadline=Date.now()+8000;let disconnected=false;
+  while(Date.now()<deadline){await new Promise(resolve=>setTimeout(resolve,200));try{const response=await fetch('/health',{cache:'no-store',signal:AbortSignal.timeout(700)});if(!response.ok){disconnected=true;break;}}catch{disconnected=true;break;}}
+  q('closedTitle').textContent=disconnected?'ClipPocket 已關閉':'正在結束 ClipPocket';
+  q('closedMessage').textContent=disconnected?'本機工具已停止，可以關閉這個分頁。':'關閉請求已送出；若仍有處理程序，請稍候再檢查。';
+  q('closedHint').textContent='按 Ctrl＋W 可關閉分頁。下次雙擊 ClipPocket.exe 即可重新使用。';
+};
 q('thumbImg').onerror=()=>q('thumbImg').hidden=true;
 q('mode').onchange=()=>renderQuality(current?.video);
 q('delivery').onchange=renderDelivery;

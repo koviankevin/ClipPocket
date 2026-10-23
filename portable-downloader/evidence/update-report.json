@@ -1,7 +1,7 @@
 {
   "status": "pass",
-  "version": "0.4.0",
-  "testedAt": "2026-10-23T13:43:07.529Z",
+  "version": "0.4.1",
+  "testedAt": "2026-10-23T15:12:46.040Z",
   "checks": [
     {
       "name": "successful update",

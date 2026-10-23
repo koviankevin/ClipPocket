@@ -76,7 +76,7 @@ async function validate(file,savedPath) {
   assert.equal((await api('download',{url:'https://www.youtube.com/watch?v=jNQXAC9IVRw',delivery:'remote'})).status,400);
   const history=JSON.parse(await fsp.readFile(path.join(ROOT,'data/history.json'),'utf8'));assert(history.every(file=>file.delivery!=='browser'));
   assert.equal(errors.length,0);report.checks.push({name:'Invalid delivery rejected; browser cache excluded from persistent history; no JS errors',status:'pass'});
-  await page.locator('#shutdown').click();await page.waitForFunction(()=>document.querySelector('#statusText').textContent.includes('工具已關閉'));await delay(1600);
+  await page.locator('#shutdown').click();await page.waitForFunction(()=>document.querySelector('#closedTitle').textContent.includes('已關閉'));assert(await page.locator('main').isHidden());await delay(1600);
   for(const cached of cachePaths)assert(!fs.existsSync(cached));assert(fs.existsSync(direct.files[0].path));
   report.checks.push({name:'Shutdown clears browser cache and keeps direct saved file',status:'pass'});
   report.status='pass';console.log('All browser delivery checks passed');

@@ -13,6 +13,8 @@ $browserReport = Get-Content -Raw -LiteralPath (Join-Path $appRoot 'evidence\bro
 if ($browserReport.status -ne 'pass' -or $browserReport.version -ne $version) { throw 'Current-version browser delivery checks must pass.' }
 $updateReport = Get-Content -Raw -LiteralPath (Join-Path $appRoot 'evidence\update-report.json') | ConvertFrom-Json
 if ($updateReport.status -ne 'pass' -or $updateReport.version -ne $version) { throw 'Current-version update and rollback checks must pass.' }
+$interfaceReport = Get-Content -Raw -LiteralPath (Join-Path $appRoot 'evidence\interface-report.json') | ConvertFrom-Json
+if ($interfaceReport.status -ne 'pass' -or $interfaceReport.version -ne $version) { throw 'Current-version readability and shutdown UI checks must pass.' }
 $buildRoot = Join-Path $workspaceRoot ('portable-build-cache\package-' + [guid]::NewGuid().ToString('N'))
 $stageRoot = Join-Path $buildRoot 'ClipPocket'
 $releaseRoot = Join-Path $workspaceRoot 'releases'

@@ -1,0 +1,12 @@
+{
+  "version": "0.4.1",
+  "checks": [
+    "shutdown terminates backend and replaces the working UI in all open tabs",
+    "readable control sizes and supporting text",
+    "desktop and narrow layouts do not overflow",
+    "blocked shutdown shows an error and keeps the working interface available",
+    "in-flight polling cannot overwrite the closed state"
+  ],
+  "status": "pass",
+  "testedAt": "2026-10-23T15:15:51.272Z"
+}
