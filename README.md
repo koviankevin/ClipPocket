@@ -61,11 +61,24 @@ pwsh -File portable-downloader/prepare-runtime.ps1
 
 準備腳本從官方固定版本下載執行元件，核對 SHA-256，並編譯啟動器。`app.cjs` 只使用 Node 內建模組。執行元件、下載內容與個人設定不提交到 Git。
 
-使用 Node.js 24 執行不連外的測試：
+使用 Node.js 24.19.0（與免安裝包準備腳本相同）執行不連外的測試，不需要安裝 npm 套件：
 
 ```powershell
-node --test portable-downloader/tests/quality.test.cjs portable-downloader/tests/browser-downloads.test.cjs
+node --test --test-reporter=tap --test-timeout=60000 portable-downloader/tests/quality.test.cjs portable-downloader/tests/browser-downloads.test.cjs portable-downloader/tests/updates.test.cjs portable-downloader/tests/pages-release.test.cjs
 ```
+
+[`Windows offline regression`](.github/workflows/windows-offline-tests.yml) 在送往 `main` 的 PR 與推送到 `main` 時執行上述相同指令，使用 `windows-2025` x64 runner、固定 Node.js 版本及 Actions commit。Runner 映像仍由 GitHub 更新，執行紀錄會列出實際映像版本、Node.js 版本、PR 來源提交及實際測試提交（PR 預設為合併預覽提交），TAP 輸出保留通過／失敗／略過數量。每個測試檔逾時 60 秒、整個 job 上限 5 分鐘。
+
+四支程式保留原有斷言，目前 Node test runner 共回報 **8 項**（畫質程式以一個測試檔計數、串流 1 項、更新 3 項、下載頁 3 項，並非 8 個畫質案例）。涵蓋來源畫質、4K／8K 選擇、直式／舊格式與無效輸入；本機 HTTP 完整內容與 Range 位元組比對、Unicode 檔名、重試、傳送中禁止清理及結束後回收；更新雜湊／大小校驗、錯誤清理及下載頁選版。串流測試只建立 256 KiB 與 16 MiB 本機暫存資料；更新與版本 API 使用假回應。
+
+| 驗證層級 | 入口與環境 | CI 成功代表的範圍 |
+| --- | --- | --- |
+| Node.js 離線回歸 | 上述四支程式；Windows runner＋Node.js | 邏輯與本機 HTTP／檔案測試，沒有啟動真實瀏覽器或處理真實媒體。 |
+| Windows 真實瀏覽器整合 | `tests/browser-flow.cjs` 等；Playwright、Edge、原生啟動器、yt-dlp、FFmpeg | 另行驗收實際存檔與解碼；不由離線 CI 結果推定。 |
+| 免安裝 ZIP 驗證 | `tests/package-check.ps1`、`tests/update-package.cjs`；已建置 ZIP 與完整 Windows 執行環境 | 另行核對最終包的 SHA-256、啟動／更新；不由原始碼測試推定。 |
+| 正式 Release 發布 | 下方「新版交付流程」 | 須另行打包、驗證及公開發布；此 CI 不建包、不發布。 |
+
+一般 PR CI 不準備完整執行元件、不下載影片、不使用帳號 Cookie 或付費服務。現有真實瀏覽器／ZIP 驗收需要下載固定執行元件、編譯 Windows 啟動器／更新器，部分入口還會連線到影片平台並執行完整解碼，耗時與成功率受平台影響；本次保留獨立手動執行，未建立新的手動 Actions。既有 `evidence` 紀錄屬於當時本機驗收，不能當作本次 Windows runner 或新 ZIP 的結果。
 
 瀏覽器整合測試另需 Playwright 1.62.1 及 Microsoft Edge；可用 `npm install --no-save playwright@1.62.1` 準備開發工具，再執行 `node portable-downloader/tests/browser-flow.cjs`。整合測試會實際連線下載公開影片，也會在本工具的資料夾內建立測試成品。打包前的測試及 SHA-256 核對完成後，執行 `pwsh -File portable-downloader/build-portable.ps1`。
 
