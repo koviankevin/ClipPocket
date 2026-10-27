@@ -1,0 +1,57 @@
+name: Windows offline regression
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  offline-tests:
+    name: Node.js 24 offline tests (Windows x64)
+    runs-on: windows-2025
+    timeout-minutes: 5
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Check out tested revision
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Set up pinned Node.js 24
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          # Match portable-downloader/prepare-runtime.ps1.
+          node-version: '24.19.0'
+          architecture: x64
+          package-manager-cache: false
+
+      - name: Record source and environment
+        env:
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          Write-Output "Event: $env:GITHUB_EVENT_NAME"
+          Write-Output "PR source commit: $env:PR_HEAD_SHA"
+          Write-Output 'Tested checkout commit (PR merge revision on pull_request):'
+          git rev-parse HEAD
+          Write-Output "Runner image: $env:ImageOS $env:ImageVersion"
+          node -p 'JSON.stringify({node:process.version,platform:process.platform,arch:process.arch,os:require("node:os").release()})'
+
+      - name: Run existing offline regressions
+        # Explicit files keep real-video, Edge and package acceptance out of PR CI.
+        # TAP includes totals; any failed assertion or timeout fails this job.
+        run: >-
+          node --test --test-reporter=tap --test-timeout=60000
+          portable-downloader/tests/quality.test.cjs
+          portable-downloader/tests/browser-downloads.test.cjs
+          portable-downloader/tests/updates.test.cjs
+          portable-downloader/tests/pages-release.test.cjs
