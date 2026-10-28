@@ -1,0 +1,52 @@
+{
+  "status": "pass",
+  "version": "0.5.2",
+  "testedAt": "2026-10-28T12:35:47.617Z",
+  "inputForm": "Facebook Reel URL without an HTTPS prefix",
+  "checks": [
+    "Provided URL analyzes without login",
+    "Default compatible MP4 completes and browser saves identical bytes",
+    "Video and audio present; entire MP4 decodes; no page errors"
+  ],
+  "bytes": 7582142,
+  "sha256": "b65c01f5503708786fc75e2f65d1902b3b5056138b07a1544cacf7d83de3f93e",
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1080,
+        "height": 1920,
+        "avg_frame_rate": "30/1"
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "avg_frame_rate": "0/0"
+      }
+    ],
+    "format": {
+      "duration": "23.552000",
+      "size": "7582142"
+    }
+  },
+  "fullDecode": {
+    "mode": "reused",
+    "baselineStatus": "pass",
+    "baselineVersion": "0.5.1",
+    "baselineTestedAt": "2026-10-28T12:07:59.272Z",
+    "baselineSha256": "b65c01f5503708786fc75e2f65d1902b3b5056138b07a1544cacf7d83de3f93e"
+  },
+  "sourceFiles": {
+    "app.cjs": "d4bbd588f69c8d1268ed53b9d4957221fee1f906b75665541443a3889b645d0b",
+    "quality.cjs": "93cff7f44d480618ed20ceb64524f141319ff3da5007e29a0a2cb70f0bf4f609",
+    "browser-downloads.cjs": "4fcce3033ed544b4ed5fbe22b1abcec8b15ccc04f0fac69f4d27d9477aee3409",
+    "ui/ui.js": "5179b381b7f8ee218c470b23016dc0993bda2b64d7948a6c72c5321ac4648db7",
+    "ui/index.html": "a2a9e0d9bbf929f0f7f1bee16493ff97ff09d4477acbb926828ee7cfcfdf0d6c",
+    "ui/style.css": "6134dc5b27b85b3051283933729ec4fad1aa4d7a470c3c3ace78538a219cd9be",
+    "version.json": "6d9461962fefa7faf8771c3a5ef798715bd02981e3dfcf490e3c60472e56b5c9",
+    "bin/yt-dlp.exe": "33121d192d706e62f684a06f80918e3f3a8ba52ac3a65213b6951c39c7d9f555"
+  }
+}

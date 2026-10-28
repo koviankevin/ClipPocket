@@ -1,5 +1,5 @@
 {
-  "version": "0.5.1",
+  "version": "0.5.2",
   "browser": "msedge.exe",
   "checks": [
     "script-opened tool tab closes; local program exits; unrelated tab stays open",
@@ -7,5 +7,5 @@
     "rejected shutdown keeps the tab and local process alive"
   ],
   "status": "pass",
-  "testedAt": "2026-10-23T16:59:56.419Z"
+  "testedAt": "2026-10-28T12:36:36.587Z"
 }

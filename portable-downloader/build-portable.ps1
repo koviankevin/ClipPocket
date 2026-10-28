@@ -19,6 +19,11 @@ $tabReport = Get-Content -Raw -LiteralPath (Join-Path $appRoot 'evidence\tab-clo
 if ($tabReport.status -ne 'pass' -or $tabReport.version -ne $version) { throw 'Current-version automatic tab closing and browser fallback checks must pass.' }
 $defaultReport = Get-Content -Raw -LiteralPath (Join-Path $appRoot 'evidence\default-browser-report.json') | ConvertFrom-Json
 if ($defaultReport.status -ne 'pass' -or $defaultReport.version -ne $version) { throw 'Current-version default browser launch checks must pass.' }
+$urlReport = Get-Content -Raw -LiteralPath (Join-Path $appRoot 'evidence\url-feedback-report.json') | ConvertFrom-Json
+if ($urlReport.status -ne 'pass' -or $urlReport.version -ne $version) { throw 'Current-version URL normalization and visible analysis feedback checks must pass.' }
+foreach ($property in $urlReport.provenance.sourceFiles.PSObject.Properties) {
+    if ((Get-FileHash -LiteralPath (Join-Path $appRoot $property.Name) -Algorithm SHA256).Hash.ToLowerInvariant() -ne $property.Value) { throw ('URL feedback check is stale: ' + $property.Name) }
+}
 $buildRoot = Join-Path $workspaceRoot ('portable-build-cache\package-' + [guid]::NewGuid().ToString('N'))
 $stageRoot = Join-Path $buildRoot 'ClipPocket'
 $releaseRoot = Join-Path $workspaceRoot 'releases'

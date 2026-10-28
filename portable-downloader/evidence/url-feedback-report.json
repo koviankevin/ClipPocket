@@ -1,0 +1,28 @@
+{
+  "version": "0.5.2",
+  "checks": [
+    "supported scheme-less URLs canonicalize to HTTPS; scheme, host, credentials and port guards remain",
+    "validation errors appear near the URL and within a narrow viewport",
+    "loading and asynchronous extractor failures are visible at the URL",
+    "success replaces error; in-flight old polls cannot overwrite or reenable new analysis; canonical input preserves video and quality choices",
+    "normalized input still hands the MP4 to browser download management",
+    "scheme-less URLs also work when downloading without a separate analysis click"
+  ],
+  "status": "pass",
+  "provenance": {
+    "node": "v24.19.0",
+    "extractor": "deterministic test subprocess",
+    "sourceFiles": {
+      "app.cjs": "d4bbd588f69c8d1268ed53b9d4957221fee1f906b75665541443a3889b645d0b",
+      "quality.cjs": "93cff7f44d480618ed20ceb64524f141319ff3da5007e29a0a2cb70f0bf4f609",
+      "browser-downloads.cjs": "4fcce3033ed544b4ed5fbe22b1abcec8b15ccc04f0fac69f4d27d9477aee3409",
+      "updates.cjs": "a5814e635248bd55d3c112d9b317e59657cbbf9628c2b0fa61bc17eda13b71dc",
+      "version.json": "6d9461962fefa7faf8771c3a5ef798715bd02981e3dfcf490e3c60472e56b5c9",
+      "ui/index.html": "a2a9e0d9bbf929f0f7f1bee16493ff97ff09d4477acbb926828ee7cfcfdf0d6c",
+      "ui/ui.js": "5179b381b7f8ee218c470b23016dc0993bda2b64d7948a6c72c5321ac4648db7",
+      "ui/style.css": "6134dc5b27b85b3051283933729ec4fad1aa4d7a470c3c3ace78538a219cd9be"
+    },
+    "browser": "156.0.4314.42"
+  },
+  "testedAt": "2026-10-28T12:40:00.804Z"
+}

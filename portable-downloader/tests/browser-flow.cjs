@@ -41,7 +41,9 @@ async function validate(file,savedPath) {
     await page.waitForFunction(()=>!document.querySelector('#download').disabled);
     await page.locator('input[name=format][value='+item.format+']').check();
     if(item.format==='mp4')await page.locator('#height').selectOption(item.resolution?analyzed.video.qualities.find(q=>q.resolution===item.resolution).id:'best');
-    const event=page.waitForEvent('download',{timeout:240000});await page.locator('#download').click();const download=await event;
+    const event=page.waitForEvent('download',{timeout:240000});let watching=true;
+    const failure=(async()=>{while(watching){const s=(await api('state')).data;const client=await page.evaluate(()=>typeof clientError==='string'?clientError:null);if(s.error||client)throw Error(s.error||client);await delay(350);}return new Promise(()=>{});})();
+    let download;try{await page.locator('#download').click();download=await Promise.race([event,failure]);}finally{watching=false;}
     assert.equal(await download.failure(),null);const state=await waitIdle(),file=state.files[0];assert.equal(file.delivery,'browser');
     assert.equal(download.suggestedFilename(),file.name);
     const saved=path.join(EVIDENCE,'browser-'+index+'.'+item.format);await download.saveAs(saved);await validate(file,saved);cachePaths.push(file.path);

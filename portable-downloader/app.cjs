@@ -33,7 +33,18 @@ if(!state.folder||!path.isAbsolute(state.folder))state.folder=path.join(ROOT,'Do
 try{const history=JSON.parse(fs.readFileSync(path.join(DATA,'history.json'),'utf8'));if(Array.isArray(history))state.files=history.filter(x=>x&&x.delivery!=='browser'&&typeof x.path==='string'&&typeof x.id==='string').slice(0,20);}catch{}
 function log(line){const clean=String(line).replace(/https?:\/\/\S+/g,u=>u.split('?')[0]);state.log.push(clean);if(state.log.length>80)state.log.shift();}
 function baseArgs(){return ['--ignore-config','--no-plugin-dirs','--plugin-dirs',path.join(ROOT,'compat'),'--no-playlist','--no-cache-dir','--no-js-runtimes','--js-runtimes','node:'+NODE,'--ffmpeg-location',FFDIR,'--encoding','utf-8','--socket-timeout','25','--retries','2','--extractor-retries','1'];}
-function normalizeUrl(raw){if(typeof raw!=='string'||raw.length>2048)throw Error('請貼上影片網址。');let u;try{u=new URL(raw.trim());}catch{throw Error('網址格式不正確。');}if(u.protocol!=='https:'||u.username||u.password||u.port)throw Error('請使用一般 HTTPS 影片網址。');const h=u.hostname.toLowerCase();const groups={YouTube:['youtube.com','www.youtube.com','m.youtube.com','youtu.be'],Facebook:['facebook.com','www.facebook.com','m.facebook.com','web.facebook.com','fb.watch'],Bilibili:['bilibili.com','www.bilibili.com','m.bilibili.com','b23.tv']};const platform=Object.keys(groups).find(k=>groups[k].includes(h));if(!platform)throw Error('目前接受 YouTube、Facebook 與 Bilibili 網址。');u.hash='';return{url:u.href,platform};}
+function normalizeUrl(raw){
+  if(typeof raw!=='string'||!raw.trim()||raw.length>2048)throw Error('請貼上影片網址。');
+  const text=raw.trim();
+  const candidate=text.startsWith('//')?'https:'+text:/^[a-z][a-z0-9+.-]*:/i.test(text)?text:'https://'+text;
+  let u;try{u=new URL(candidate);}catch{throw Error('網址格式不正確。');}
+  if(u.protocol!=='https:'||u.username||u.password||u.port)throw Error('請使用一般 HTTPS 影片網址。');
+  const h=u.hostname.toLowerCase();
+  const groups={YouTube:['youtube.com','www.youtube.com','m.youtube.com','youtu.be'],Facebook:['facebook.com','www.facebook.com','m.facebook.com','web.facebook.com','fb.watch'],Bilibili:['bilibili.com','www.bilibili.com','m.bilibili.com','b23.tv']};
+  const platform=Object.keys(groups).find(k=>groups[k].includes(h));
+  if(!platform)throw Error('目前接受 YouTube、Facebook 與 Bilibili 網址。');
+  u.hash='';return{url:u.href,platform};
+}
 function run(exe,args,onLine){return new Promise((resolve,reject)=>{if(cancelled)return reject(Error('已取消下載。'));const proc=spawn(exe,args,{cwd:ROOT,windowsHide:true,shell:false,env:{...process.env,PATH:[BIN,FFDIR,path.join(process.env.SystemRoot||'C:\\Windows','System32')].join(path.delimiter),PYTHONIOENCODING:'utf-8',PYTHONDONTWRITEBYTECODE:'1'}});activeProcess=proc;let stdout='',stderr='',pending='';proc.stdout.setEncoding('utf8');proc.stderr.setEncoding('utf8');proc.stdout.on('data',chunk=>{stdout+=chunk;if(stdout.length>8*1024*1024){proc.kill();return;}pending+=chunk;const lines=pending.split(/\r?\n/);pending=lines.pop();for(const line of lines)if(onLine)onLine(line);});proc.stderr.on('data',chunk=>{stderr=(stderr+chunk).slice(-24000);for(const line of chunk.split(/\r?\n/))if(line)log(line);});proc.on('error',reject);proc.on('close',code=>{if(activeProcess===proc)activeProcess=null;if(pending&&onLine)onLine(pending);if(cancelled)return reject(Error('已取消下載。'));if(code!==0)return reject(Error(stderr.trim()||'處理程序未完成（代碼 '+code+'）。'));resolve({stdout,stderr});});});}
 async function extract(raw) {
   const parsed=normalizeUrl(raw);
@@ -175,14 +186,15 @@ async function handle(req,res) {
         case '/api/update-check':updates.check().catch(e=>log(e.message));return json(res,202,{ok:true});
         case '/api/update-install':canUpdate();if(!updates.info)throw Error('請先檢查是否有新版。');updates.install(canUpdate,shutdown).catch(e=>log(e.message));return json(res,202,{ok:true});
         case '/api/heartbeat':lastBeat=Date.now();return json(res,200,{ok:true});
-        case '/api/analyze':
+        case '/api/analyze': {
           if(state.busy)throw Error('目前有工作進行中。');
-          normalizeUrl(body.url);analyze(body.url).catch(e=>log(e.message));return json(res,202,{ok:true});
+          const parsed=normalizeUrl(body.url);analyze(parsed.url).catch(e=>log(e.message));return json(res,202,{ok:true,url:parsed.url});
+        }
         case '/api/download': {
           if(state.busy)throw Error('目前有工作進行中。');
-          normalizeUrl(body.url);outputRequest(body);deliveryRequest(body);
+          const parsed=normalizeUrl(body.url);outputRequest(body);deliveryRequest(body);
           const jobId=crypto.randomUUID();
-          download(body,jobId).catch(e=>log(e.message));return json(res,202,{ok:true,jobId});
+          download({...body,url:parsed.url},jobId).catch(e=>log(e.message));return json(res,202,{ok:true,jobId,url:parsed.url});
         }
         case '/api/browser-download':return json(res,200,browserDownloads.issue(body.id));
         case '/api/cancel':stopChild();return json(res,200,{ok:true});

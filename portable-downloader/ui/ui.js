@@ -2,13 +2,34 @@
 const token=location.hash.slice(1);
 history.replaceState(null,'',location.pathname);
 const q=id=>document.getElementById(id);
-let current=null,stopped=false,closingUI=false,clientError=null,qualityStamp='',noticeTimer,pendingJob=null,handoffBusy=false;
+let current=null,stopped=false,closingUI=false,clientError=null,qualityStamp='',noticeTimer,pendingJob=null,handoffBusy=false,analysisUI=null;
 const samples={youtube:'https://www.youtube.com/watch?v=jNQXAC9IVRw',facebook:'https://www.facebook.com/cnn/videos/10155529876156509/',bilibili:'https://www.bilibili.com/video/BV1nx411u79K',youtube4k:'https://www.youtube.com/watch?v=aqz-KE-bpKQ'};
 async function api(route,body){
   const response=await fetch('/api/'+route,{method:body===undefined?'GET':'POST',headers:{'X-ClipPocket-Token':token,...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{body:JSON.stringify(body)})});
   const result=await response.json();if(!response.ok)throw Error(result.error||'操作未完成。');return result;
 }
 function localError(error){clientError=error.message;q('status').classList.add('error');q('statusText').textContent=error.message;}
+function analysisFeedback(message,kind='info'){
+  const node=q('urlFeedback');node.hidden=false;node.classList.toggle('error',kind==='error');node.dataset.kind=kind;
+  node.setAttribute('role',kind==='error'?'alert':'status');node.setAttribute('aria-live',kind==='error'?'assertive':'polite');node.textContent=message;
+  if(kind==='error'){const box=node.getBoundingClientRect();if(box.top<0||box.bottom>innerHeight)node.scrollIntoView({block:'nearest'});}
+}
+async function startAnalyze(){
+  clientError=null;const request={acceptedAt:null,pending:true,error:null};analysisUI=request;
+  analysisFeedback('正在讀取影片資訊…','loading');q('analyze').disabled=true;
+  try{const result=await api('analyze',{url:q('url').value});if(stopped||closingUI||analysisUI!==request)return;q('url').value=result.url;request.acceptedAt=performance.now();}
+  catch(error){if(stopped||closingUI||analysisUI!==request)return;request.pending=false;request.error=error.message;q('analyze').disabled=false;localError(error);analysisFeedback(error.message,'error');}
+}
+function renderAnalysis(state,requestedAt){
+  const request=analysisUI;
+  // A poll already in flight when the user clicked must not restore an old
+  // operation's error while the new analysis request is being acknowledged.
+  if(!request||!request.pending||request.acceptedAt===null||requestedAt<request.acceptedAt)return;
+  if(state.busy)return;
+  if(state.error){request.pending=false;request.error=state.error;analysisFeedback(state.error,'error');}
+  else if(inputMatches(state.video)){request.pending=false;analysisFeedback('已找到影片，請選擇格式與畫質。','success');}
+  else if(state.phase==='cancelled'){request.pending=false;analysisFeedback('已取消讀取影片資訊。');}
+}
 function notice(message){clearTimeout(noticeTimer);q('notice').textContent=message;q('notice').hidden=false;noticeTimer=setTimeout(()=>q('notice').hidden=true,5000);}
 function formatTime(seconds){if(!seconds)return'長度依來源提供';const n=Math.round(seconds);return Math.floor(n/60)+' 分 '+n%60+' 秒';}
 function selectedFormat(){return document.querySelector('input[name=format]:checked').value;}
@@ -44,7 +65,7 @@ function renderQuality(video){
     q('height').value=sameVideo&&options.some(option=>option.id===previous)?previous:'best';
   }
   q('qualityHint').textContent=matching?video.qualityNotice:'先讀取影片資訊，即可選擇這支影片實際提供的解析度與幀率。';
-  const disabled=Boolean(current?.busy||current?.update?.busy)||selectedFormat()==='mp3';q('height').disabled=disabled;q('mode').disabled=disabled;
+  const disabled=Boolean(current?.busy||current?.update?.busy||analysisUI?.pending)||selectedFormat()==='mp3';q('height').disabled=disabled;q('mode').disabled=disabled;
   q('modeHint').textContent=q('mode').value==='original'?'保留來源編碼，通常不需轉檔；部分播放器可能無法播放。':'必要時轉成 H.264＋AAC，保留所選解析度與幀率；高畫質轉檔較久。';
 }
 function renderHistory(files){
@@ -59,9 +80,10 @@ function renderHistory(files){
     item.append(title,meta,reveal);q('history').append(item);
   }
 }
-function render(state){
-  current=state;renderUpdate(state);for(const id of ['url','paste','analyze','download','chooseFolder','delivery'])q(id).disabled=state.busy||state.update?.busy;
-  document.querySelectorAll('input[name=format], [data-sample]').forEach(el=>el.disabled=state.busy||state.update?.busy);
+function render(state,requestedAt){
+  renderAnalysis(state,requestedAt);
+  current=state;renderUpdate(state);const busy=Boolean(state.busy||state.update?.busy||analysisUI?.pending);for(const id of ['url','paste','analyze','download','chooseFolder','delivery'])q(id).disabled=busy;
+  document.querySelectorAll('input[name=format], [data-sample]').forEach(el=>el.disabled=busy);
   q('cancel').hidden=!state.busy;q('status').classList.toggle('error',Boolean(state.error));q('statusText').textContent=state.error||state.message;q('statusDetail').textContent=state.detail||'';
   q('folderPath').textContent=state.folder;q('folderPath').title=state.folder;q('log').textContent=state.log.join('\n');
   q('progressTrack').hidden=!state.busy;q('progressTrack').classList.toggle('indeterminate',state.progress===null);q('progressFill').style.width=(state.progress||0)+'%';
@@ -89,23 +111,24 @@ function renderUpdate(state){
 }
 async function poll(){
   if(stopped)return;
+  const requestedAt=performance.now();
   let state;
   try{state=await api('state');}
   catch{
     if(!stopped&&!closingUI){stopped=true;document.querySelector('main').hidden=true;q('closedPanel').hidden=false;q('closedTitle').textContent='ClipPocket 連線已結束';q('closedMessage').textContent='工具已從其他分頁關閉，或本機程式已停止。';q('closedHint').textContent='可以關閉此分頁。需要使用時，請重新開啟 ClipPocket.exe。';window.scrollTo(0,0);}
     if(!stopped)setTimeout(poll,700);return;
   }
-  if(!stopped&&!closingUI){render(state);await handoff(state);if(clientError){q('status').classList.add('error');q('statusText').textContent=clientError;}}
+  if(!stopped&&!closingUI){render(state,requestedAt);await handoff(state);if(clientError){q('status').classList.add('error');q('statusText').textContent=clientError;}}
   if(!stopped)setTimeout(poll,700);
 }
-function changedUrl(){clientError=null;renderQuality(current?.video);q('videoInfo').hidden=!inputMatches(current?.video);}
+function changedUrl(){clientError=null;analysisUI=null;q('urlFeedback').hidden=true;renderQuality(current?.video);q('videoInfo').hidden=!inputMatches(current?.video);}
 q('url').oninput=changedUrl;
 q('paste').onclick=async()=>{try{q('url').value=await navigator.clipboard.readText();changedUrl();q('url').focus();}catch{q('url').focus();notice('請在網址欄按 Ctrl＋V 貼上。');}};
-document.querySelectorAll('[data-sample]').forEach(el=>el.onclick=()=>{q('url').value=samples[el.dataset.sample];changedUrl();api('analyze',{url:q('url').value}).catch(localError);});
-q('analyze').onclick=()=>{clientError=null;api('analyze',{url:q('url').value}).catch(localError);};
+document.querySelectorAll('[data-sample]').forEach(el=>el.onclick=()=>{q('url').value=samples[el.dataset.sample];changedUrl();startAnalyze();});
+q('analyze').onclick=startAnalyze;
 q('download').onclick=async()=>{
   clientError=null;q('download').disabled=true;
-  try{const result=await api('download',{url:q('url').value,format:selectedFormat(),quality:q('height').value,mode:q('mode').value,delivery:q('delivery').value});pendingJob=q('delivery').value==='browser'?result.jobId:null;}
+  try{const result=await api('download',{url:q('url').value,format:selectedFormat(),quality:q('height').value,mode:q('mode').value,delivery:q('delivery').value});q('url').value=result.url;pendingJob=q('delivery').value==='browser'?result.jobId:null;}
   catch(error){localError(error);q('download').disabled=false;}
 };
 q('checkUpdate').onclick=()=>api('update-check',{}).catch(error=>notice(error.message));
