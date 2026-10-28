@@ -1,0 +1,59 @@
+{
+  "status": "pass",
+  "version": "0.5.3",
+  "checks": [
+    "automatic and manual checking show an explicit busy label",
+    "cooldown explains remaining seconds and automatically restores the action",
+    "errors allow retry; installation states are explained; media processing alone does not disable checking",
+    "click feedback is immediate and an old poll cannot restore an idle button or send a duplicate request",
+    "failed local requests restore a usable retry button",
+    "real browser click, cooldown recovery, installation label and narrow layout verified without media/network requests"
+  ],
+  "provenance": {
+    "node": "v24.19.0",
+    "sourceFiles": {
+      "ui/ui.js": "c6d2602f206f11a567201173734c586e42ebb519697710adffb1147bbad13d05",
+      "ui/index.html": "7ad6946341e26918b34605c921cdfeee57e6cd0cf6c7fd757e8d2a8ec7bddef5",
+      "updates.cjs": "179da312f819b50cdaeb3cd4889fd79687c064ef48d42b62bf6176189174f97b",
+      "version.json": "1d4c0df2b387342582eb549385d87cd4c21dcbe9b0041f2fb3ba143d252b83cb",
+      "ClipPocket.exe": "27e32d549b1040e0a7a11bb9f54b05cf31b88c493dc64d725f7ee1719cc2e08a",
+      "Updater.exe": "33f8ab097a97d0cb875929448ab195b4a33ef2534e04feec47d84230e6bdce6e",
+      "bin/node.exe": "3602f2bb1a10f2cbab4c36886218a33c1ab3db87290e73b033c46c77147d0237",
+      "bin/yt-dlp.exe": "33121d192d706e62f684a06f80918e3f3a8ba52ac3a65213b6951c39c7d9f555",
+      "bin/ffmpeg/avcodec-63.dll": "831473f2fd68855de58ebf724d73d915224e3a9f530a69ec85b1a586a0af2f81",
+      "bin/ffmpeg/avdevice-63.dll": "00c1addcc5db1375878f2a6c8e9afc4209095be70c23af9f6d0b16b7fcf28017",
+      "bin/ffmpeg/avfilter-12.dll": "2c5edc647749a9ab4fed9bfe896f0c4d509c10b22ef173dbe5311e19e9f8ef4d",
+      "bin/ffmpeg/avformat-63.dll": "f5de533ea15dfab1417d2557865cc800ea2b53aaf7b1028904b81e79ddef6e51",
+      "bin/ffmpeg/avutil-61.dll": "4e0fc3e0278b1ad5ce2747f3e79d5c81eda3497f61713df73eef05f64f0a3c55",
+      "bin/ffmpeg/ffmpeg.exe": "df6b2df3cd47fdfe221bf9be0c5c7363cdbd1b916f35894392d44203a10847b7",
+      "bin/ffmpeg/ffprobe.exe": "26ebc05bb447a7a86a692e54190d57d72fbe07fe4c659151c8cb158c7f2fe429",
+      "bin/ffmpeg/swresample-7.dll": "d874f1568330fe122d4efdda2185619787c3db6200b576c1cf668058df58fe35",
+      "bin/ffmpeg/swscale-10.dll": "dadabae858b51f93190b66415d3eb91d06679ec6e6e55e4fb70d1b4ee24bae18",
+      "compat/clippocket/yt_dlp_plugins/extractor/bilibili_compat.py": "fbb8a78143d70e206700ef77a0d954dbdddba18b6f6fdc628696934aa259610f",
+      "app.cjs": "d4bbd588f69c8d1268ed53b9d4957221fee1f906b75665541443a3889b645d0b",
+      "quality.cjs": "93cff7f44d480618ed20ceb64524f141319ff3da5007e29a0a2cb70f0bf4f609",
+      "browser-downloads.cjs": "4fcce3033ed544b4ed5fbe22b1abcec8b15ccc04f0fac69f4d27d9477aee3409",
+      "Launcher.cs": "8eecd0b56e0979d0dc48b2a5a72e055232c009c2eed678974091b8d38cbdae1f",
+      "Updater.cs": "183d8a9260f2d99c8394598e8a2dff8478c7ad7bc8e4894febbae8a6ac64e601",
+      "ui/style.css": "6134dc5b27b85b3051283933729ec4fad1aa4d7a470c3c3ace78538a219cd9be"
+    }
+  },
+  "testedAt": "2026-10-28T13:20:14.307Z",
+  "browserValidation": "pass",
+  "reusedReports": {
+    "browser-report.json": {
+      "version": "0.5.2",
+      "sourceCommit": "7db046c0a4697f0d3952b75cd06936b0771fa8f3",
+      "sha256": "5759472ef29b2e3f254b44db21e7d38a027004586c40d6e172805d89730c5dbf",
+      "reason": "Media/runtime and client code outside update controls are unchanged"
+    },
+    "update-report.json": {
+      "version": "0.5.2",
+      "sourceCommit": "7db046c0a4697f0d3952b75cd06936b0771fa8f3",
+      "sha256": "b41c413d0a4c27d2322241b6817ac9f56327c497487acfcca936a297563b351e",
+      "reason": "Native helpers, package verification and installation logic are unchanged"
+    }
+  },
+  "reuseVerified": true,
+  "baselineVersion": "0.5.2"
+}

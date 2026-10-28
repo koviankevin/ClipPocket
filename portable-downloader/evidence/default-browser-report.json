@@ -1,6 +1,6 @@
 {
   "status": "pass",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "checks": [
     "normal startup hands the local URL to the Windows default browser opener without a custom profile",
     "repeated launch reuses the existing local service",
@@ -8,5 +8,5 @@
     "shutdown stops the local service",
     "previous dedicated profile is retained and unused"
   ],
-  "testedAt": "2026-10-28T12:36:38.599Z"
+  "testedAt": "2026-10-28T13:22:14.883Z"
 }

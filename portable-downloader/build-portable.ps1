@@ -1,7 +1,23 @@
+param([switch]$UpdateFeedbackOnly)
 $ErrorActionPreference = 'Stop'
 $appRoot = $PSScriptRoot
 $workspaceRoot = Split-Path $appRoot
 $version = (Get-Content -Raw -LiteralPath (Join-Path $appRoot 'version.json') | ConvertFrom-Json).version
+$feedbackReport = $null
+if ($UpdateFeedbackOnly) {
+    $feedbackReport = Get-Content -Raw -LiteralPath (Join-Path $appRoot 'evidence\update-feedback-report.json') | ConvertFrom-Json
+    if ($feedbackReport.status -ne 'pass' -or $feedbackReport.version -ne $version -or -not $feedbackReport.reuseVerified -or $feedbackReport.browserValidation -ne 'pass') { throw 'Focused update feedback validation and reuse proof must pass.' }
+    foreach ($property in $feedbackReport.provenance.sourceFiles.PSObject.Properties) {
+        if ((Get-FileHash -LiteralPath (Join-Path $appRoot $property.Name) -Algorithm SHA256).Hash.ToLowerInvariant() -ne $property.Value) { throw ('Focused validation is stale: ' + $property.Name) }
+    }
+}
+function Assert-CurrentOrReusedReport($report, $name) {
+    if ($report.status -ne 'pass') { throw ('Validation failed: ' + $name) }
+    if ($report.version -eq $version) { return }
+    $reuse = if ($feedbackReport) { $feedbackReport.reusedReports.$name } else { $null }
+    $hash = (Get-FileHash -LiteralPath (Join-Path $appRoot ('evidence\' + $name)) -Algorithm SHA256).Hash.ToLowerInvariant()
+    if (-not $reuse -or $reuse.version -ne $report.version -or $reuse.sha256 -ne $hash) { throw ('Current-version or source-bound reused validation required: ' + $name) }
+}
 $reportPath = Join-Path $appRoot 'evidence\feature-report.json'
 $report = Get-Content -Raw -LiteralPath $reportPath | ConvertFrom-Json
 if ($report.status -ne 'pass' -or @($report.downloads | Where-Object { $_.platform -eq 'Bilibili' }).Count -lt 2) {
@@ -10,9 +26,9 @@ if ($report.status -ne 'pass' -or @($report.downloads | Where-Object { $_.platfo
 $fourK = Get-Content -Raw -LiteralPath (Join-Path $appRoot 'evidence\4k-report.json') | ConvertFrom-Json
 if ($fourK.status -ne 'pass') { throw 'The real 4K excerpt check must pass.' }
 $browserReport = Get-Content -Raw -LiteralPath (Join-Path $appRoot 'evidence\browser-report.json') | ConvertFrom-Json
-if ($browserReport.status -ne 'pass' -or $browserReport.version -ne $version) { throw 'Current-version browser delivery checks must pass.' }
+Assert-CurrentOrReusedReport $browserReport 'browser-report.json'
 $updateReport = Get-Content -Raw -LiteralPath (Join-Path $appRoot 'evidence\update-report.json') | ConvertFrom-Json
-if ($updateReport.status -ne 'pass' -or $updateReport.version -ne $version) { throw 'Current-version update and rollback checks must pass.' }
+Assert-CurrentOrReusedReport $updateReport 'update-report.json'
 $interfaceReport = Get-Content -Raw -LiteralPath (Join-Path $appRoot 'evidence\interface-report.json') | ConvertFrom-Json
 if ($interfaceReport.status -ne 'pass' -or $interfaceReport.version -ne $version) { throw 'Current-version readability and shutdown UI checks must pass.' }
 $tabReport = Get-Content -Raw -LiteralPath (Join-Path $appRoot 'evidence\tab-close-report.json') | ConvertFrom-Json

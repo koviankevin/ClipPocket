@@ -25,10 +25,10 @@ async function downloadVerified(info,destination,onProgress=()=>{},fetcher=fetch
   }catch(error){await handle?.close();handle=null;await fsp.rm(destination,{force:true});throw error;}finally{await handle?.close();}
 }
 class Updates {
-  constructor(root,version,{fetcher=fetch}={}){this.root=root;this.version=version;this.fetcher=fetcher;this.info=null;this.lastAttempt=0;this.busy=false;this.state={phase:'idle',current:version,latest:null,progress:null,message:'開啟工具時會自動檢查正式版更新。',error:null};}
+  constructor(root,version,{fetcher=fetch}={}){this.root=root;this.version=version;this.fetcher=fetcher;this.info=null;this.lastAttempt=0;this.busy=false;this.state={phase:'idle',current:version,latest:null,progress:null,message:'開啟工具時會自動檢查正式版更新。',error:null,nextCheckAt:0};}
   async check(){
     if(this.busy||this.state.phase==='checking'||Date.now()-this.lastAttempt<15000)return this.state;
-    this.lastAttempt=Date.now();this.state.phase='checking';this.state.error=null;this.state.message='正在檢查更新…';
+    this.lastAttempt=Date.now();this.state.nextCheckAt=this.lastAttempt+15000;this.state.phase='checking';this.state.error=null;this.state.message='正在檢查更新…';
     try{const response=await this.fetcher(API,{signal:AbortSignal.timeout(12000),headers:{Accept:'application/vnd.github+json','User-Agent':'ClipPocket/'+this.version}});if(!response.ok)throw Error('GitHub 暫時無法提供更新資訊（HTTP '+response.status+'），請稍後再試。');
       this.info=releaseInfo(await response.json(),this.version);this.state.latest=this.info?.version||null;this.state.phase=this.info?'available':'current';this.state.message=this.info?'新版 v'+this.info.version+' 已推出。':'目前已是最新正式版本。';this.state.checkedAt=new Date().toISOString();
     }catch(error){this.state.phase=this.info?'available':'error';this.state.error=error.name==='TimeoutError'?'更新檢查逾時，請稍後再試。':error.message;this.state.message=this.state.error;}

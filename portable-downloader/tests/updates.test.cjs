@@ -21,3 +21,8 @@ test('offline checks remain nonfatal; busy work prevents all installation activi
   await assert.rejects(updater.install(()=>{throw Error('download active');},()=>{}),/download active/);assert.equal(requests,1);assert.equal(updater.busy,false);
   updater.state.phase='checking';await assert.rejects(updater.install(()=>{},()=>{}),/等待更新檢查/);assert.equal(updater.busy,false);
 });
+test('check state exposes its cooldown without issuing duplicate requests',async()=>{
+  let requests=0,finish;const updater=new Updates('.','0.5.2',{fetcher:()=>{requests++;return new Promise(resolve=>finish=resolve);}});
+  const checking=updater.check();assert.equal(updater.state.phase,'checking');assert(updater.state.nextCheckAt>Date.now());const retryAt=updater.state.nextCheckAt;
+  await updater.check();assert.equal(requests,1);finish(new Response(JSON.stringify(release())));await checking;assert.equal(updater.state.phase,'available');await updater.check();assert.equal(requests,1);assert.equal(updater.state.nextCheckAt,retryAt);
+});

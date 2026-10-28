@@ -2,7 +2,7 @@
 const token=location.hash.slice(1);
 history.replaceState(null,'',location.pathname);
 const q=id=>document.getElementById(id);
-let current=null,stopped=false,closingUI=false,clientError=null,qualityStamp='',noticeTimer,pendingJob=null,handoffBusy=false,analysisUI=null;
+let current=null,stopped=false,closingUI=false,clientError=null,qualityStamp='',noticeTimer,pendingJob=null,handoffBusy=false,analysisUI=null,checkRequestPending=false,checkRequestedAt=0;
 const samples={youtube:'https://www.youtube.com/watch?v=jNQXAC9IVRw',facebook:'https://www.facebook.com/cnn/videos/10155529876156509/',bilibili:'https://www.bilibili.com/video/BV1nx411u79K',youtube4k:'https://www.youtube.com/watch?v=aqz-KE-bpKQ'};
 async function api(route,body){
   const response=await fetch('/api/'+route,{method:body===undefined?'GET':'POST',headers:{'X-ClipPocket-Token':token,...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{body:JSON.stringify(body)})});
@@ -101,13 +101,26 @@ function renderUpdate(state){
   q('updateMessage').textContent=update.message;
   if(!update.busy&&!update.error&&update.result){q('updateMessage').textContent+=' '+update.result.message;}
   q('updateWarning').hidden=!update.latest||update.phase==='restarting';
-  q('checkUpdate').disabled=update.busy||update.phase==='checking';
+  if(checkRequestPending&&Number(update.nextCheckAt)>=checkRequestedAt)checkRequestPending=false;
+  const checking=checkRequestPending||update.phase==='checking';
+  const seconds=Math.max(0,Math.ceil(((Number(update.nextCheckAt)||0)-Date.now())/1000));
+  const check=q('checkUpdate');check.disabled=Boolean(update.busy||checking||seconds);
+  check.textContent=update.phase==='restarting'?'即將重開…':update.busy?'更新中…':checking?'檢查中…':seconds?seconds+' 秒後重試':update.phase==='error'?'重新檢查':'檢查更新';
+  check.title=update.busy?'更新完成後即可再次檢查。':checking?'正在取得最新版本資訊，請稍候。':seconds?'剛剛已檢查，倒數結束即可再次檢查。':'檢查是否有新版。';
+  check.setAttribute('aria-busy',String(Boolean(checking||update.busy)));
   q('installUpdate').hidden=!update.latest;q('installUpdate').disabled=update.busy||state.busy||update.phase==='checking';
   q('shutdown').disabled=Boolean(update.busy);
   q('updateProgress').hidden=!['downloading','verifying'].includes(update.phase);
   if(update.progress===null)q('updateProgress').removeAttribute('value');else q('updateProgress').value=update.progress;
   q('updatePanel').classList.toggle('update-available',Boolean(update.latest));
   if(update.phase==='restarting'){stopped=true;document.querySelectorAll('button,input,select').forEach(el=>el.disabled=true);}
+}
+async function checkForUpdates(){
+  if(checkRequestPending||stopped||closingUI)return;
+  checkRequestPending=true;checkRequestedAt=Date.now();const button=q('checkUpdate');
+  button.disabled=true;button.textContent='檢查中…';button.setAttribute('aria-busy','true');button.title='正在取得最新版本資訊，請稍候。';
+  try{await api('update-check',{});}
+  catch(error){checkRequestPending=false;notice(error.message);if(current)renderUpdate(current);else{button.disabled=false;button.textContent='檢查更新';button.setAttribute('aria-busy','false');}}
 }
 async function poll(){
   if(stopped)return;
@@ -131,7 +144,7 @@ q('download').onclick=async()=>{
   try{const result=await api('download',{url:q('url').value,format:selectedFormat(),quality:q('height').value,mode:q('mode').value,delivery:q('delivery').value});q('url').value=result.url;pendingJob=q('delivery').value==='browser'?result.jobId:null;}
   catch(error){localError(error);q('download').disabled=false;}
 };
-q('checkUpdate').onclick=()=>api('update-check',{}).catch(error=>notice(error.message));
+q('checkUpdate').onclick=checkForUpdates;
 q('installUpdate').onclick=async()=>{q('installUpdate').disabled=true;try{await api('update-install',{});}catch(error){notice(error.message);q('installUpdate').disabled=false;}};
 q('cancel').onclick=()=>api('cancel',{}).catch(localError);
 q('chooseFolder').onclick=async()=>{q('chooseFolder').disabled=true;try{await api('folder',{});}catch(error){localError(error);}finally{q('chooseFolder').disabled=false;}};

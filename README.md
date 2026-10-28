@@ -69,7 +69,7 @@ node --test --test-reporter=tap --test-timeout=60000 portable-downloader/tests/q
 
 [`Windows offline regression`](.github/workflows/windows-offline-tests.yml) 在送往 `main` 的 PR 與推送到 `main` 時執行上述相同指令，使用 `windows-2025` x64 runner、固定 Node.js 版本及 Actions commit。Runner 映像仍由 GitHub 更新，執行紀錄會列出實際映像版本、Node.js 版本、PR 來源提交及實際測試提交（PR 預設為合併預覽提交），TAP 輸出保留通過／失敗／略過數量。每個測試檔逾時 60 秒、整個 job 上限 5 分鐘。
 
-四支程式保留原有斷言，目前 Node test runner 共回報 **8 項**（畫質程式以一個測試檔計數、串流 1 項、更新 3 項、下載頁 3 項，並非 8 個畫質案例）。涵蓋來源畫質、4K／8K 選擇、直式／舊格式與無效輸入；本機 HTTP 完整內容與 Range 位元組比對、Unicode 檔名、重試、傳送中禁止清理及結束後回收；更新雜湊／大小校驗、錯誤清理及下載頁選版。串流測試只建立 256 KiB 與 16 MiB 本機暫存資料；更新與版本 API 使用假回應。
+四支程式保留原有斷言，目前 Node test runner 共回報 **9 項**（畫質程式以一個測試檔計數、串流 1 項、更新 4 項、下載頁 3 項，並非 9 個畫質案例）。涵蓋來源畫質、4K／8K 選擇、直式／舊格式與無效輸入；本機 HTTP 完整內容與 Range 位元組比對、Unicode 檔名、重試、傳送中禁止清理及結束後回收；更新雜湊／大小校驗、錯誤清理及下載頁選版。串流測試只建立 256 KiB 與 16 MiB 本機暫存資料；更新與版本 API 使用假回應。
 
 | 驗證層級 | 入口與環境 | CI 成功代表的範圍 |
 | --- | --- | --- |
@@ -114,3 +114,6 @@ ClipPocket 自有程式採 [MIT 授權](LICENSE)。隨附第三方元件保留�
 下載／轉檔或瀏覽器傳送中會阻擋更新。套用前先驗證整包，關閉本機程序後只替換清單列出的程式檔案；設定、已儲存影片及使用者自建檔案保留。替換或新版啟動失敗時嘗試還原原檔並重開，紀錄位於工具的 data/update-result.json。更新中請勿關機或移動工具；若還原也受磁碟或權限問題阻擋，會保留備份並顯示位置。
 
 開發者：更新測試使用隔離的本機假版本，涵蓋成功更新、啟動失敗還原、校驗不符及保護設定資料夾，執行 node portable-downloader/tests/update-native.cjs。打包時 runtime-manifest.json 必須列出全部程式檔案、版本與 SHA-256；新版本需保持更新協定相容。
+
+
+更新按鈕的範圍驗證（基準須為原驗收時的提交，可用 CLIPPOCKET_BASELINE 指定）：node portable-downloader/tests/update-feedback.cjs --browser --record-reuse。只有測試證明媒體流程、原生執行元件及更新套用邏輯與基準提交完全相同，才可用 build-portable.ps1 -UpdateFeedbackOnly 沿用 browser-report 與 update-report；原報告保留原受測版本，沿用依據與當前來源雜湊記錄在 evidence/update-feedback-report.json。其他打包關卡及最終 ZIP 測試照常執行，預設完整驗證入口保留。

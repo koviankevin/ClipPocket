@@ -1,8 +1,8 @@
 {
   "application": "ClipPocket",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "platform": "windows-x64",
-  "generatedAt": "2026-10-28T12:40:12.3149861Z",
+  "generatedAt": "2026-10-28T13:25:01.7929293Z",
   "files": [
     {
       "path": "4K片段驗證.json",
@@ -11,13 +11,13 @@
     },
     {
       "path": "更新驗證.json",
-      "bytes": 1081,
-      "sha256": "d309a50ce8bbf8b8c41f33d33e1e8e0c0f9c54045e84e6588a8dc088fde8f51a"
+      "bytes": 1138,
+      "sha256": "b41c413d0a4c27d2322241b6817ac9f56327c497487acfcca936a297563b351e"
     },
     {
       "path": "使用說明.txt",
-      "bytes": 6443,
-      "sha256": "27cce2cc9baae2cc4f77344e2a1c35ee5b274afd60f2835e8b21bcd6800cccbb"
+      "bytes": 6766,
+      "sha256": "8b3ee40be0e0a62526d8f84d0eb562e391df7568bacc840e9c38a4927ec6394b"
     },
     {
       "path": "資料夾視窗驗證.json",
@@ -26,8 +26,8 @@
     },
     {
       "path": "瀏覽器儲存驗證.json",
-      "bytes": 4825,
-      "sha256": "98b170c9ed0e74be2d9ca0f6718b9c3239be3d9f699b40f78c18732689f2c3f7"
+      "bytes": 5001,
+      "sha256": "5759472ef29b2e3f254b44db21e7d38a027004586c40d6e172805d89730c5dbf"
     },
     {
       "path": "驗證結果.json",
@@ -36,8 +36,8 @@
     },
     {
       "path": "驗證摘要.md",
-      "bytes": 8318,
-      "sha256": "1a513e11e2eaf3e1ee83e09dc2a791280ae7032a3ae90f6e7141d5954de8d37a"
+      "bytes": 8767,
+      "sha256": "831cc6e161d19ab119187c23009d1633d00bcf5e5628d245452190a53f0707e4"
     },
     {
       "path": "app.cjs",
@@ -86,13 +86,13 @@
     },
     {
       "path": "updates.cjs",
-      "bytes": 6556,
-      "sha256": "a5814e635248bd55d3c112d9b317e59657cbbf9628c2b0fa61bc17eda13b71dc"
+      "bytes": 6616,
+      "sha256": "179da312f819b50cdaeb3cd4889fd79687c064ef48d42b62bf6176189174f97b"
     },
     {
       "path": "version.json",
       "bytes": 65,
-      "sha256": "6d9461962fefa7faf8771c3a5ef798715bd02981e3dfcf490e3c60472e56b5c9"
+      "sha256": "1d4c0df2b387342582eb549385d87cd4c21dcbe9b0041f2fb3ba143d252b83cb"
     },
     {
       "path": "bin/node.exe",
@@ -186,8 +186,8 @@
     },
     {
       "path": "ui/index.html",
-      "bytes": 6165,
-      "sha256": "a2a9e0d9bbf929f0f7f1bee16493ff97ff09d4477acbb926828ee7cfcfdf0d6c"
+      "bytes": 6181,
+      "sha256": "7ad6946341e26918b34605c921cdfeee57e6cd0cf6c7fd757e8d2a8ec7bddef5"
     },
     {
       "path": "ui/style.css",
@@ -196,8 +196,8 @@
     },
     {
       "path": "ui/ui.js",
-      "bytes": 14582,
-      "sha256": "5179b381b7f8ee218c470b23016dc0993bda2b64d7948a6c72c5321ac4648db7"
+      "bytes": 15913,
+      "sha256": "c6d2602f206f11a567201173734c586e42ebb519697710adffb1147bbad13d05"
     }
   ]
 }
