@@ -1,5 +1,9 @@
 # ClipPocket · 影片帶著走
 
+## v1.0.0 · 統一版本起點
+
+自本次起，GH Studio 工具統一以 **v1.0.0** 作為新起點。這是版本命名重整，保留既有功能與歷史紀錄；後續各工具依變更分別遞增：修正用修正版、相容功能用次版、不相容變更用主版。對外正式版本不加 preview；資料格式版本不隨產品版本重設。
+
 Windows 免安裝影片下載工具，支援 YouTube、Facebook 與 Bilibili 的公開、免登入單支影片。用瀏覽器操作，在自己的電腦下載、合併影音及轉檔，不需要訂閱或架設伺服器。
 
 **[下載與操作教學](https://koviankevin.github.io/ClipPocket/)** · [GitHub 最新正式版本](https://github.com/koviankevin/ClipPocket/releases/latest) · [版本紀錄](https://github.com/koviankevin/ClipPocket/releases)

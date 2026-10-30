@@ -1,5 +1,5 @@
 {
-  "version": "0.5.3",
+  "version": "1.0.0",
   "checks": [
     "supported scheme-less URLs canonicalize to HTTPS; scheme, host, credentials and port guards remain",
     "validation errors appear near the URL and within a narrow viewport",
@@ -10,19 +10,19 @@
   ],
   "status": "pass",
   "provenance": {
-    "node": "v24.19.0",
+    "node": "v24.22.1",
     "extractor": "deterministic test subprocess",
     "sourceFiles": {
       "app.cjs": "d4bbd588f69c8d1268ed53b9d4957221fee1f906b75665541443a3889b645d0b",
       "quality.cjs": "93cff7f44d480618ed20ceb64524f141319ff3da5007e29a0a2cb70f0bf4f609",
       "browser-downloads.cjs": "4fcce3033ed544b4ed5fbe22b1abcec8b15ccc04f0fac69f4d27d9477aee3409",
       "updates.cjs": "179da312f819b50cdaeb3cd4889fd79687c064ef48d42b62bf6176189174f97b",
-      "version.json": "1d4c0df2b387342582eb549385d87cd4c21dcbe9b0041f2fb3ba143d252b83cb",
-      "ui/index.html": "7ad6946341e26918b34605c921cdfeee57e6cd0cf6c7fd757e8d2a8ec7bddef5",
+      "version.json": "a350ba406ae201ccea103fb7165406f3446579251ab5a669ad1a8634bf8644a5",
+      "ui/index.html": "e06a07d7b2f4e747d4f57f241497e8341d96aca46c0ae3675e796e893c3cecfe",
       "ui/ui.js": "c6d2602f206f11a567201173734c586e42ebb519697710adffb1147bbad13d05",
       "ui/style.css": "6134dc5b27b85b3051283933729ec4fad1aa4d7a470c3c3ace78538a219cd9be"
     },
-    "browser": "156.0.4314.42"
+    "browser": "156.0.4314.50"
   },
-  "testedAt": "2026-10-28T13:21:58.069Z"
+  "testedAt": "2026-10-30T06:48:28.196Z"
 }

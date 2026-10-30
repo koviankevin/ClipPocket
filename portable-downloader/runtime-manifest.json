@@ -1,8 +1,8 @@
 {
   "application": "ClipPocket",
-  "version": "0.5.3",
+  "version": "1.0.0",
   "platform": "windows-x64",
-  "generatedAt": "2026-10-28T13:25:01.7929293Z",
+  "generatedAt": "2026-10-30T06:50:19.9384245Z",
   "files": [
     {
       "path": "4K片段驗證.json",
@@ -17,7 +17,7 @@
     {
       "path": "使用說明.txt",
       "bytes": 6766,
-      "sha256": "8b3ee40be0e0a62526d8f84d0eb562e391df7568bacc840e9c38a4927ec6394b"
+      "sha256": "05d38e94198958826b3de1eff5a88e89f33f7d1f8694639f910410d899a10260"
     },
     {
       "path": "資料夾視窗驗證.json",
@@ -92,7 +92,7 @@
     {
       "path": "version.json",
       "bytes": 65,
-      "sha256": "1d4c0df2b387342582eb549385d87cd4c21dcbe9b0041f2fb3ba143d252b83cb"
+      "sha256": "a350ba406ae201ccea103fb7165406f3446579251ab5a669ad1a8634bf8644a5"
     },
     {
       "path": "bin/node.exe",
@@ -187,7 +187,7 @@
     {
       "path": "ui/index.html",
       "bytes": 6181,
-      "sha256": "7ad6946341e26918b34605c921cdfeee57e6cd0cf6c7fd757e8d2a8ec7bddef5"
+      "sha256": "e06a07d7b2f4e747d4f57f241497e8341d96aca46c0ae3675e796e893c3cecfe"
     },
     {
       "path": "ui/style.css",

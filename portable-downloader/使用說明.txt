@@ -1,4 +1,4 @@
-ClipPocket v0.5.3 — 影片帶著走（Windows 免安裝版）
+ClipPocket v1.0.0 — 影片帶著走（Windows 免安裝版）
 
 開始使用
 1. 先把 ZIP 完整解壓縮到一個資料夾。

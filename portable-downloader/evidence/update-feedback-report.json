@@ -1,6 +1,6 @@
 {
   "status": "pass",
-  "version": "0.5.3",
+  "version": "1.0.0",
   "checks": [
     "automatic and manual checking show an explicit busy label",
     "cooldown explains remaining seconds and automatically restores the action",
@@ -10,12 +10,12 @@
     "real browser click, cooldown recovery, installation label and narrow layout verified without media/network requests"
   ],
   "provenance": {
-    "node": "v24.19.0",
+    "node": "v24.22.1",
     "sourceFiles": {
       "ui/ui.js": "c6d2602f206f11a567201173734c586e42ebb519697710adffb1147bbad13d05",
-      "ui/index.html": "7ad6946341e26918b34605c921cdfeee57e6cd0cf6c7fd757e8d2a8ec7bddef5",
+      "ui/index.html": "e06a07d7b2f4e747d4f57f241497e8341d96aca46c0ae3675e796e893c3cecfe",
       "updates.cjs": "179da312f819b50cdaeb3cd4889fd79687c064ef48d42b62bf6176189174f97b",
-      "version.json": "1d4c0df2b387342582eb549385d87cd4c21dcbe9b0041f2fb3ba143d252b83cb",
+      "version.json": "a350ba406ae201ccea103fb7165406f3446579251ab5a669ad1a8634bf8644a5",
       "ClipPocket.exe": "27e32d549b1040e0a7a11bb9f54b05cf31b88c493dc64d725f7ee1719cc2e08a",
       "Updater.exe": "33f8ab097a97d0cb875929448ab195b4a33ef2534e04feec47d84230e6bdce6e",
       "bin/node.exe": "3602f2bb1a10f2cbab4c36886218a33c1ab3db87290e73b033c46c77147d0237",
@@ -38,7 +38,7 @@
       "ui/style.css": "6134dc5b27b85b3051283933729ec4fad1aa4d7a470c3c3ace78538a219cd9be"
     }
   },
-  "testedAt": "2026-10-28T13:20:14.307Z",
+  "testedAt": "2026-10-30T06:42:49.502Z",
   "browserValidation": "pass",
   "reusedReports": {
     "browser-report.json": {
